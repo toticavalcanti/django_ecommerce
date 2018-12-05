@@ -12,11 +12,11 @@ def about_page(request):
         "title": "Página sobre"
         "content": "Bem-vindo a página sobre"
     }
-    return render(request, "about_page.html", context)
+    return render(request, "about/view.html", context)
 
 def contact_page(request):
     context = {
         "title": "Página de contato"
         "content": "Bem-vindo a página de contato"
     }
-    return render(request, "contact_page.html", context)
+    return render(request, "contact/view.html", context)
