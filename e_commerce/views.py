@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
+
 def home_page(request):
     context = {
         "title": "Página principal",
@@ -21,7 +22,4 @@ def contact_page(request):
     }
     if request.method == "POST":
         print(request.POST)
-        print(request.POST.get('fullname'))
-        print(request.POST.get('email'))
-        print(request.POST.get('content'))
     return render(request, "contact/view.html", context)
