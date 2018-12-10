@@ -20,8 +20,8 @@
                     <p>{{ content }}</p
                     <div class='col-sm-6 col-12'>
                     <form method='POST'> {% csrf_token %}
-                        <input type='text' class='form-control' placeholder='Nome' value='Digite seu nome completo'>
-                        <input type='email' class='form-control' placeholder='E-Mail' value='Digite seu e-mail'>
+                        <input type='text' class='form-control' placeholder='Digite seu nome completo'>
+                        <input type='email' class='form-control' placeholder='Digite seu e-mail'>
                         <textarea name='content' class='form-control' placeholder='Digite seu texto aqui'></textarea>
                         <button type='submit' class='btn btn-default'>Enviar</button>
                     </form>
