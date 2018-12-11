@@ -1,8 +1,8 @@
 from django import forms
 
 class ContactForm(forms.Form):
-    full_name = forms.CharField(
-        error_messages={'required': 'Obrigatório o preenchimento do nome'}, 
+    Nome_Completo = forms.CharField(
+        error_messages={'required': 'Obrigatório o preenchimento do nome!'}, 
         widget=forms.TextInput(
             attrs={
                     "class": "form-control", 
@@ -11,7 +11,7 @@ class ContactForm(forms.Form):
             )
         )
     email     = forms.EmailField(
-        error_messages={'invalid': 'Obrigatório o preenchimento do email'},
+        error_messages={'invalid': 'Digite um email válido!'},
         widget=forms.EmailInput(
             attrs={
                     "class": "form-control", 
@@ -19,7 +19,8 @@ class ContactForm(forms.Form):
                 }
             )
         )
-    content   = forms.CharField(
+    Mensagem   = forms.CharField(
+        error_messages={'required': 'É obrigatório o preenchimento do campo mensagem!'},
         widget=forms.Textarea(
             attrs={
                     "class": "form-control", 
@@ -27,7 +28,6 @@ class ContactForm(forms.Form):
                 }
             )
 )
-    
     def clean_email(self):
         email = self.cleaned_data.get("email")
         if not "gmail.com" in email:
