@@ -37,7 +37,6 @@ class ProductDetailView(DetailView):
 def product_detail_view(request, pk = None, *args, **kwargs):
     #instance = Product.objects.get(pk = pk) #get the object id
     instance = get_object_or_404(Product, pk = pk)
-    queryset = Product.objects.all()
     context = {
         'object': instance
     }
