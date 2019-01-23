@@ -27,7 +27,6 @@ def product_list_view(request):
 
 #Class Based View
 class ProductDetailView(DetailView):
-    queryset = Product.objects.all()
     template_name = "products/detail.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -35,14 +34,18 @@ class ProductDetailView(DetailView):
         print(context)
         return context
 
+    def get_object(self, *args, **kwargs):
+        pk = self.kwargs.get('pk')
+        instance = Product.objects.get_by_id(pk)
+        if instance is None:
+            raise Http404("Esse produto não existe!")
+        return instance
+
 #Function Based View
 def product_detail_view(request, pk = None, *args, **kwargs):
-    #instance = Product.objects.get(pk = pk) #get the object id
-    #instance = get_object_or_404(Product, pk = pk)
-    qs = Product.objects.filter(id = pk)
-    if qs.count() == 1:
-        instance = qs.first()
-    else:
+    instance = Product.objects.get_by_id(pk)
+    print(instance)
+    if instance is None:
         raise Http404("Esse produto não existe!")
 
     context = {
