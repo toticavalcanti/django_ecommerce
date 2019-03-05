@@ -27,7 +27,6 @@ class ProductListView(ListView):
     #     print(context)
     #     return context
 
-
 #Function Based View
 def product_list_view(request):
     queryset = Product.objects.all()
