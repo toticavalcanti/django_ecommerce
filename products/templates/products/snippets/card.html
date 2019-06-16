@@ -1,9 +1,11 @@
 <div class="card" style="width: 18rem;">
-    <img src="..." class="card-img-top" alt="...">
+    {% if instance.image %}
+        <img src="{{ instance.image.url }}" class="card-img-top" alt="...">
+    {% endif %}
     <div class="card-body">
-        <h5 class="card-title">Card title</h5>
+        <h5 class="card-title">{{ instance.title }}</h5>
         <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
             content.</p>
-        <a href="#" class="btn btn-primary">Go somewhere</a>
+        <a href="{{ instance.get_absolute_url }}" class="btn btn-primary">Detalhe</a>
     </div>
 </div>
