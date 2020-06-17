@@ -1,4 +1,3 @@
-
 {% url 'home' as home_url %}
 {% url 'contact' as contact_url %}
 {% url 'products:list' as products_list_url %}
@@ -6,37 +5,55 @@
 {% url 'logout' as logout_url %}
 {% url 'register' as register_url %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
-  <a class="navbar-brand" href="{{ home_url }}">{% if nome_da_marca %} {{ nome_da_marca }} {% else %} C&oacute;digo Fluente eCommerce {% endif %}</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
+  <div class='container'>
+    <a class="navbar-brand" href="{{ home_url }}">
+      <img src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+      {% if nome_da_marca %} 
+      {{ nome_da_marca }} 
+      {% else %} C&oacute;digo Fluente eCommerce 
+      {% endif %}
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav mr-auto">
-      <li class="nav-item {% if request.path == home_url %} active {% endif %}">
-        <a class="nav-link" href="{{ home_url }}">Home <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item {% if request.path == contact_url %} active {% endif %}">
-        <a class="nav-link" href="{{ contact_url }}">Contato</a>
-      </li>
-      <li class="nav-item {% if request.path == products_list_url %} active {% endif %}">
-        <a class="nav-link" href="{{ products_list_url }}">Produtos</a>
-      </li>
-      {% if request.user.is_authenticated %}
-      <li class="nav-item {% if request.path == login_url %} active {% endif %}"> 
-        <a class="nav-link" href="{{ logout_url }}">Logout</a> 
-      </li>
-      {% else %}
-      <li class="nav-item {% if request.path == login_url %} active {% endif %}">
-        <a class="nav-link" href="{{ login_url }}">Login</a>
-      </li>
-      <li class="nav-item {% if request.path == register %} active {% endif %}"> 
-        <a class="nav-link" href="{{ register_url }}">Registrar-se</a> 
-      </li>
-    {% endif %}
-    </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-    </form>
-  </div>
+        <li class="nav-item {% if request.path == home_url %} active {% endif %}">
+          <a class="nav-link" href="{{ home_url }}">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item {% if request.path == contact_url %} active {% endif %}">
+          <a class="nav-link" href="{{ contact_url }}">Contato</a>
+        </li>
+        <li class="nav-item {% if request.path == products_list_url %} active {% endif %}">
+          <a class="nav-link" href="{{ products_list_url }}">Produtos</a>
+        </li>
+        {% if request.user.is_authenticated %}
+        <li class="nav-item {% if request.path == login_url %} active {% endif %}"> 
+          <a class="nav-link" href="{{ logout_url }}">Logout</a> 
+        </li>
+        {% else %}
+        <li class="nav-item {% if request.path == login_url %} active {% endif %}">
+          <a class="nav-link" href="{{ login_url }}">Login</a>
+        </li>
+        <li class="nav-item {% if request.path == register %} active {% endif %}"> 
+          <a class="nav-link" href="{{ register_url }}">Registrar-se</a> 
+        </li>
+      {% endif %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Dropdown link
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+          </div>
+        </li>
+      </ul>
+      <form class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      </form>
+    </div>
+  </div><!--fim container-->
 </nav>
