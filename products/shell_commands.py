@@ -28,7 +28,7 @@ white.products.all()
 """
 This is an actual queryset of PRODUCTS much
 like Products.objects.all(), but in this case, it's ALL
-of the productstha are related to the "Black" tag
+of the productstha are related to the "White" tag
 """
 white.products.all().first()
 """
