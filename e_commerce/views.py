@@ -5,6 +5,8 @@ from django.shortcuts import render, redirect
 from .forms import ContactForm, LoginForm, RegisterForm
 
 def home_page(request):
+    request.session['cart_id'] = 123
+    request.session['user'] = request.user.username
     context = {
                     "title": "Home Page",
                     "content": "Bem vindo a Home Page",
