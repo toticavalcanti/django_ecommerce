@@ -1,3 +1,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.sqlite3
+bin/
+.vscode/
+lib/
+pyvenv.cfg
