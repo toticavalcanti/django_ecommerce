@@ -13,12 +13,7 @@
       {% endif %}
     </div>
     <div class='col-12 col-md-6'>
-      {{ cart }}
-      {% if object in cart.products.all %}
-      Produto no Carrinho
-      {% else %}
-      Adicione ao carrinho
-      {% endif %}
+      {% include 'products/snippets/update-cart.html' with product=object cart=cart %}
     </div>
   </div>
 
