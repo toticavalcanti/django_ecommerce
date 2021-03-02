@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+<<<<<<< HEAD
   <h1>Carrinho</h1>
   {% if cart.products.exists %}
     <table class="table">
@@ -28,6 +29,39 @@
         </tr>
       </tbody>
     </table>
+=======
+  <h1>Cart</h1>
+  {% if cart.products.exists %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nome</th>
+        <th>Preço/th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in cart.products.all %}
+      <tr>
+        <th scope="row">{{ forloop.counter }}</th>
+        <td>
+          <a href='{{ product.get_absolute_url }}'>{{ product.title }}</a>
+          {% include 'products/snippets/update-cart.html' with product=product cart=cart in_cart=True %}
+        </td>
+        <td>{{ product.price }}</td>
+      </tr>
+      {% endfor %}
+      <tr>
+        <td colspan="2"></td>
+        <td><b>Subtotal</b> {{ cart.subtotal }}</td>
+      </tr>
+      <tr>
+        <td colspan="2"></td>
+        <td><b>Total</b> {{ cart.total }}</td>
+      </tr>
+    </tbody>
+  </table>
+>>>>>>> remove-cart-item
   {% else %}
     <p class='lead'>Carrinho vazio</p>
   {% endif %}
