@@ -35,4 +35,4 @@ def checkout_home(request):
     #aqui a order associada ao carrinho
     else:
         order_obj, new_order_obj = Order.objects.get_or_create(cart = cart_obj)
-    return render("carts/checkout.html", {"object": order_obj})
+    return render(request, "carts/checkout.html", {"object": order_obj})
