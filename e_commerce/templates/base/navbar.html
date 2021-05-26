@@ -34,7 +34,7 @@
         </li>
         {% else %}
         <li class="nav-item {% if request.path == login_url %} active {% endif %}">
-          <a class="nav-link" href="{{ login_url }}">Login</a>
+          <a class="nav-link" href="{{ login_url }}?next={{request.path}}">Login</a>
         </li>
         <li class="nav-item {% if request.path == register %} active {% endif %}"> 
           <a class="nav-link" href="{{ register_url }}">Registrar-se</a> 
