@@ -53,15 +53,8 @@ def checkout_home(request):
         pass
 
     if billing_profile is not None:
-        order_qs = Order.objects.filter(billing_profile = billing_profile, cart = cart_obj, active = True)
-        if order_qs.count() == 1:
-            order_obj = order_qs.first()
-        else:
-            old_order_qs = Order.objects.exclude(billing_profile = billing_profile).filter(cart = cart_obj, active = True)
-            if old_order_qs.exists():
-                old_order_qs.update(active = False)
-            order_obj = Order.objects.create(billing_profile = billing_profile, cart = cart_obj)
-    
+        order_obj, order_obj_created = Order.objects.new_or_get(billing_profile, cart_obj)
+
     context = {
         "object": order_obj,
         "billing_profile": billing_profile,
