@@ -16,14 +16,16 @@ class OrderManager(models.Manager):
     def new_or_get(self, billing_profile, cart_obj):
         created = False
         qs = self.get_queryset().filter(
-                billing_profile = billing_profile, 
-                cart = cart_obj, 
-                active = True)
+                billing_profile=billing_profile, 
+                cart=cart_obj, 
+                active=True, 
+                status='created'
+            )
         if qs.count() == 1:
             obj = qs.first()
         else:
             obj = self.model.objects.create(
-                    billing_profile = billing_profile,
+                    billing_profile=billing_profile, 
                     cart=cart_obj)
             created = True
         return obj, created
@@ -53,7 +55,20 @@ class Order(models.Model):
         self.total = formatted_total 
         self.save()
         return new_total
+    def check_done(self):
+        billing_profile = self.billing_profile
+        shipping_address = self.shipping_address
+        billing_address = self.billing_address
+        total = self.total
+        if billing_profile and shipping_address and billing_address and total > 0:
+            return True
+        return False
 
+    def mark_paid(self):
+        if self.check_done():
+            self.status = "paid"
+            self.save()
+        return self.status
 def pre_save_create_order_id(sender, instance, *args, **kwargs):
     if not instance.order_id:
         instance.order_id = unique_order_id_generator(instance)
@@ -84,4 +99,4 @@ def post_save_order(sender, instance, created, *args, **kwargs):
         print("Atualizando")
         instance.update_total()
 
-post_save.connect(post_save_order, sender=Order)
+post_save.connect(post_save_order, sender=Order) 
