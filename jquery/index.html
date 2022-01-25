@@ -23,10 +23,11 @@
   <body>
     <h1 class='header'>Olá mundo!</h1>
     <h1 class='header'>Olá mundo!</h1>   
-    <h1 class='header' id='header-3'>Olá mundo!</h1>
+    <h1 class='header' id='header-3'>Cabeçalho 3</h1>
     <h1 class='header'>Olá mundo!</h1>
     <p class="description">Primeiro parágrafo</p>
-    <p class="description">Segundo parágrafo</p>
+    <!-- <p class="description"><a href='#'>Link Qualquer</a></p> -->
+    <p class="description"><a href='/abc'>Link Qualquer</a></p>
     <p class="description">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis dolor non arcu fringilla tempus. Nam sollicitudin justo eu risus vestibulum finibus. Aliquam aliquet volutpat mi, vitae tempor tellus placerat sit amet. Praesent faucibus diam vitae arcu posuere, non dapibus ipsum lobortis. Nunc accumsan neque quis lacus molestie vehicula. Aenean imperdiet, urna eget ultrices sodales, mi urna hendrerit quam, vel imperdiet erat risus ac odio. Nullam congue quis arcu nec ullamcorper. Cras hendrerit justo sed enim accumsan, a mattis leo tincidunt. Etiam vel velit purus. In dapibus at augue tempor rutrum. Morbi suscipit metus et euismod rutrum. Sed at mollis metus. Phasellus est metus, fermentum eu elementum vitae, posuere in tellus.
         Vestibulum vulputate in tellus eget mollis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Cras mollis purus quis ipsum rhoncus, at cursus nisi interdum. Aliquam erat volutpat. Duis urna justo, hendrerit vel tempor id, fringilla venenatis lorem. Aenean ac velit mauris. Mauris viverra ex quis lacus pellentesque mattis. Integer sit amet consectetur nunc. Sed a pellentesque orci, ac gravida nisl. Duis nec sapien malesuada, volutpat dolor id, blandit dui. Ut id hendrerit metus. Proin quis mollis mauris. Integer nec lorem enim. Aliquam non finibus mauris. Ut euismod scelerisque nunc feugiat rhoncus. Aliquam erat volutpat.
@@ -58,18 +59,38 @@
   
     <script type="text/javascript">
         $(document).ready(function(){
-            // $descriptionItems recebe um array
-            const $descriptionItems = $(".description")
-            console.log($descriptionItems.length)
-            $.each($descriptionItems, function(index, obj){
-                const item = $(this)
-                let actualHeight = item[0].scrollHeight
-                let shouldBeHeight = item.height()
-                if(actualHeight > shouldBeHeight + 50){
-                    item.css("overflow-y", "scroll")
-                }
-            })
+          // $descriptionItems recebe um array
+          const $descriptionItems = $(".description")
+          // console.log($descriptionItems.length)//
+          $.each($descriptionItems, function(index, obj){
+            const item = $(this)
+            const actualHeight = item[0].scrollHeight 
+            const shouldBeHeight = item.height() 
+            //console.log(actualHeight, shouldBeHeight)
+            if(actualHeight > shouldBeHeight){
+              item.css("overflow-y", "scroll")
+            }
+          })
+  
+          const header3 = $("#header-3")
+          header3.click(function(){
+            const $this = $(this)
+            //console.log($this)
+            //console.log(event)
+            window.location.href = 'https://www.codigofluente.com.br/'
+          })
+  
+          const descriptionLinks = $(".description a")
+          descriptionLinks.click(function(event){
+            console.log(event)
+            event.preventDefault()
+            const $this = $(this)
+            const href = $this.attr("href")
+            console.log(href)
+            alert(href)
+            window.location.href = 'https://www.google.com/'
+          })
         })
-    </script>
+      </script>
 </body>
 </html>
