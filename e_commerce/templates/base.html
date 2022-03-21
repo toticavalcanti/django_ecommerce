@@ -31,22 +31,29 @@
                 const httpMethod = thisForm.attr("method");
                 const formData = thisForm.serialize();
                 $.ajax({
-                    url: actionEndpoint,
-                    method: httpMethod,
-                    data: formData,
-                    success: function(data){
-                        console.log("Sucesso")
-                        console.log(data)
-                    },
-                    error: function(errorData){
-                        console.log("Erro")
-                        console.log(errorData)
+                  url: actionEndpoint,
+                  method: httpMethod,
+                  data: formData,
+                  success: function(data){
+                    console.log("Sucesso")
+                    console.log(data)
+                    console.log("Adicionado", data.added)
+                    console.log("Removido", data.removed)
+                    const submitSpan = thisForm.find(".submit-span")
+                    if(data.added){
+                        submitSpan.html("No carrinho <button type='submit' class='btn btn-link'>Excluir</button>")
+                    } else{
+                        submitSpan.html("<button type='submit' class='btn btn-success'>Adicionar</button>")
                     }
+                  },
+                  error: function(errorData){
+                    console.log("Erro")
+                    console.log(errorData)
+                  }
                 })
               })
             })
-          </script>
-
+        </script>
     </body>
 
 </html>
