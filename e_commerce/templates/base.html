@@ -24,7 +24,7 @@
               const productForm = $(".form-product-ajax")
               productForm.submit(function(event){
                 event.preventDefault();
-                console.log("O formulário não foi enviado!");
+                // console.log("O formulário não foi enviado!");
                 // o this pega os dados relacionados a esse form
                 const thisForm = $(this);
                 const actionEndpoint = thisForm.attr("action");
@@ -45,6 +45,8 @@
                     } else{
                         submitSpan.html("<button type='submit' class='btn btn-success'>Adicionar</button>")
                     }
+                    const navbarCount = $(".navbar-cart-count")
+                    navbarCount.text(data.cartItemCount)
                   },
                   error: function(errorData){
                     console.log("Erro")
