@@ -23,11 +23,11 @@
       {% endfor %}
       <tr>
         <td colspan="2"></td>
-        <td><b>Subtotal</b> $<span clas="cart-subtotal"> {{ cart.subtotal }} </span> </td>
+        <td><b>Subtotal</b> $<span class="cart-subtotal"> {{ cart.subtotal }} </span> </td>
       </tr>
       <tr>
         <td colspan="2"></td>
-        <td><b>Total</b> $<span clas="cart-total"> {{ cart.total }} </span> </td>
+        <td><b>Total</b> $<span class="cart-total"> {{ cart.total }} </span> </td>
       </tr>
       <tr>
         <td colspan="2"></td>
@@ -35,7 +35,7 @@
       </tr>
     </tbody>
   </table>
-  <div class="cart-item-remove-form" style='display:none'>
+  <div class="cart-item-remove-form" class='cart-item-remove-form' style='display:none'>
     {% include 'carts/snippets/remove-product.html' %}
   </div>
   {% else %}
