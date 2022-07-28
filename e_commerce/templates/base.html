@@ -27,7 +27,8 @@
                 // console.log("O formulário não foi enviado!");
                 // o this pega os dados relacionados a esse form
                 const thisForm = $(this);
-                const actionEndpoint = thisForm.attr("action");
+                //const actionEndpoint = thisForm.attr("action");
+                const actionEndpoint = thisForm.attr("data-endpoint");
                 const httpMethod = thisForm.attr("method");
                 const formData = thisForm.serialize();
                 $.ajax({
@@ -35,10 +36,10 @@
                   method: httpMethod,
                   data: formData,
                   success: function(data){
-                    console.log("Sucesso")
-                    console.log(data)
-                    console.log("Adicionado", data.added)
-                    console.log("Removido", data.removed)
+                    // console.log("Sucesso")
+                    // console.log(data)
+                    // console.log("Adicionado", data.added)
+                    // console.log("Removido", data.removed)
                     const submitSpan = thisForm.find(".submit-span")
                     if(data.added){
                         submitSpan.html("No carrinho <button type='submit' class='btn btn-link'>Excluir</button>")
@@ -47,6 +48,10 @@
                     }
                     const navbarCount = $(".navbar-cart-count")
                     navbarCount.text(data.cartItemCount)
+                    const currentPath = window.location.href
+                    if(currentPath.indexOf("cart") != -1){
+                      refreshCart()
+                    }
                   },
                   error: function(errorData){
                     console.log("Erro")
@@ -54,6 +59,50 @@
                   }
                 })
               })
+
+              function refreshCart(){
+                //console.log("Excluído do carrinho atual!")
+                const cartTable = $(".cart-table")
+                const cartBody = cartTable.find(".cart-body")
+                //cartBody.html("<h1>Mudou!</h1>")
+                const productsRow = cartBody.find(".cart-product")
+                const currentUrl = window.location.href 
+                const refreshCartUrl = '/api/cart/';
+                const refreshCartMethod = "GET";
+                const data = {};
+
+                $.ajax({
+                  url: refreshCartUrl,
+                  method: refreshCartMethod,
+                  data: data,
+                  success: function(data){
+                    console.log(data)
+                    const hiddenCartItemRemoveForm = $(".cart-item-remove-form")
+                    if(data.products.length > 0){
+                      productsRow.html(" ")
+                      let i = data.products.length
+                      $.each(data.products, function(index, value){
+                          const newCartItemRemove = hiddenCartItemRemoveForm.clone()
+                          newCartItemRemove.css("display", "block")
+                          newCartItemRemove.find(".cart-item-product-id").val(value.id)
+                          cartBody.prepend("<tr><th scope=\"row\">" + i + 
+                          "</th><td><a href='" + value.url + "'>" + 
+                          value.name + "</a>" + newCartItemRemove.html() + "</td><td>" + value.price + "</td></tr>")
+                          i--
+                      })
+                      cartBody.find(".cart-subtotal").text(data.subtotal)
+                      cartBody.find(".cart-total").text(data.total)
+                    } else {
+                      window.location.href = currentUrl
+                    }
+                  },
+                  error: function(errorData){
+                    console.log("Erro")
+                    console.log(errorData)
+                  }
+                })
+              }
+
             })
         </script>
     </body>

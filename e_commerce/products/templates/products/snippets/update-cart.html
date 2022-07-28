@@ -1,16 +1,14 @@
-<form class='form-product-ajax' method='POST' action='{% url "cart:update" %}' class="form"> {% csrf_token %}
+<form class='form-product-ajax' method='POST' action='{% url "cart:update" %}' 
+  data-endpoint='{% url "cart:update" %}' 
+  class="form"> {% csrf_token %}
   <input type='hidden' name='product_id' value='{{ product.id }}' />
-    {% if in_cart %}
-      <button type='submit' class='btn btn-link btn-sm' style="padding:0px;cursor: pointer;">
-       Excluir
-      </button>
+
+  <span class='submit-span'>
+    {% if product in cart.products.all %}
+      No carrinho <button type='submit' class='btn btn-link'>Excluir</button>
     {% else %}
-    <span class='submit-span'>
-      {% if product in cart.products.all %}
-        No carrinho <button type='submit' class='btn btn-link'>Excluir</button>
-      {% else %}
-        <button type='submit' class='btn btn-success'>Adicionar</button>
-      {% endif %}
-    </span>
-  {% endif %}
+      <button type='submit' class='btn btn-success'>Adicionar</button>
+    {% endif %}
+
+  </span>
 </form>
