@@ -21,7 +21,38 @@
         {% include 'base/js.html' %}
         <script>
             $(document).ready(function(){
-              const productForm = $(".form-product-ajax")
+              // Auto Search
+              const searchForm = $(".search-form")
+              const searchInput = searchForm.find("[name='q']") //
+              const typingTimer = 0
+              const typingInterval = 500 // .5 second
+              const searchBtn = searchForm.find("[type='submit']")
+              searchInput.keyup(function(event){
+                //key released
+                clearTimeout(typingTimer)
+                typingTimer = setTimeout(performSearch, typingInterval)
+              })
+
+              searchInput.keydown(function(event){
+                //key pressed
+                clearTimeout(typingTimer)
+              })
+
+              function displaySearching(){
+                searchBtn.addClass("disabled")
+                searchBtn.html("<i class='fa fa-spin fa-spinner'></i>Buscando...")
+              }
+
+              function performSearch(){
+                displaySearching()
+                const query = searchInput.val()
+                setTimeout(function(){
+                  window.location.href = '/search/?q=' + query
+                }, 1000)
+                
+              }
+              
+              //Cart + Add Product
               productForm.submit(function(event){
                 event.preventDefault();
                 // console.log("O formulário não foi enviado!");
