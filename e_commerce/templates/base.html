@@ -80,8 +80,11 @@
             }
           },
           error: function(errorData){
-            console.log("Erro")
-            console.log(errorData)
+            $.alert({
+              title: 'Opps!',
+              content: 'Ocorreu um erro, tente novamente mais tarde!',
+              theme: 'modern'
+          });
           }
         })
       })

@@ -60,6 +60,7 @@ def cart_update(request):
                 "cartItemCount": cart_obj.products.count()
             }
             return JsonResponse(json_data)
+            #return JsonResponse({"message": "Erro 400"}, status = 400)
     return redirect("cart:home")
 
 def checkout_home(request):
