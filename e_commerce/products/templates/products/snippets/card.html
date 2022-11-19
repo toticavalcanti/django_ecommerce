@@ -5,10 +5,18 @@
       </a>
     {% endif %}
     <div class="card-body">
+<<<<<<< HEAD
       <h5 class="card-title">{{ instance.title }}</h5>
       <p class="card-text">{{ instance.description|truncatewords:14 }}</p>
       <a href="{{ instance.get_absolute_url }}" class="btn btn-primary">Detalhe</a>
         {% include 'products/snippets/update-cart.html' with product=instance cart=cart %}
       <!--<a href="{% url 'products:detail' slug=instance.slug %}" class="btn btn-warning">Atalho para a URL</a>-->
+=======
+        <h5 class="card-title">{{ instance.title }}</h5>
+        <p class="card-text">{{ instance.description|truncatewords:14 }}</p>
+        <a href="{{ instance.get_absolute_url }}" class="btn btn-primary">Detalhe</a>
+        {% include 'products/snippets/update-cart.html' with product=instance cart=cart %}
+        <!-- <a href="{% url 'products:detail' slug=instance.slug %}" class="btn btn-warning">Atalho para a URL</a> -->
+>>>>>>> cc7fe165dd96504fa1f31447b45393c27bf6dcab
     </div>
   </div>

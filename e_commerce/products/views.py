@@ -33,6 +33,12 @@ class ProductListView(ListView):
         context['cart'] = cart_obj
         return context
 
+    def get_context_data(self, *args, **kwargs):
+        context = super(ProductListView,  self).get_context_data(*args, **kwargs)
+        cart_obj, new_obj = Cart.objects.new_or_get(self.request)
+        context['cart'] = cart_obj
+        return context
+
 #Function Based View
 def product_list_view(request):
     queryset = Product.objects.all()
