@@ -18,6 +18,60 @@
     <script>
       $(document).ready(function(){
 
+        // Contact Form Handler
+        var contactForm = $(".contact-form")
+        var contactFormMethod = contactForm.attr("method")
+        var contactFormEndpoint = contactForm.attr("action")
+        function displaySubmitting(submitBtn, defaultText, doSubmit){
+            if (doSubmit){
+                submitBtn.addClass("disabled")
+                submitBtn.html("<i class='fa fa-spin fa-spinner'></i> Enviando...")
+            } else {
+                submitBtn.removeClass("disabled")
+                submitBtn.html(defaultText)
+            }
+        }
+        contactForm.submit(function(event){
+            event.preventDefault()
+            const contactFormSubmitBtn = contactForm.find("[type='submit']")
+            const contactFormSubmitBtnTxt = contactFormSubmitBtn.text()
+            const contactFormData = contactForm.serialize()
+            const thisForm = $(this)
+            displaySubmitting(contactFormSubmitBtn, "", true)
+            $.ajax({
+                method: contactFormMethod,
+                url: contactFormEndpoint,
+                data: contactFormData,
+                success: function(data){
+                    contactForm[0].reset()
+                    $.alert({
+                        title: "Success!",
+                        content: data.message,
+                        theme: "modern",
+                    })
+                    setTimeout(function(){
+                        displaySubmitting(contactFormSubmitBtn, contactFormSubmitBtnTxt, false)
+                    }, 500)
+                },
+                error: function(error){
+                    console.log(error.responseJSON)
+                    const jsonData = error.responseJSON
+                    let msg = ""
+                    $.each(jsonData, function(key, value){
+                        msg += key + ": " + value[0].message + "<br/>"
+                    })
+                    $.alert({
+                        title: "Oops!",
+                        content: msg,
+                        theme: "modern",
+                    })
+                    setTimeout(function(){
+                        displaySubmitting(contactFormSubmitBtn, contactFormSubmitBtnTxt, false)
+                    }, 500)
+                }
+            })
+        })
+
         // Auto Search
         const searchForm = $(".search-form")
         const searchInput = searchForm.find("[name='q']") // input name='q'
