@@ -5,8 +5,7 @@ from django.contrib.auth.models import (
 )
 
 class UserManager(BaseUserManager):
-    def get_by_natural_key(self, email):
-        return self.get(email=email)
+
     def create_user(self, email, password = None, is_active = True, is_staff = False, is_admin = False):
         if not email:
             raise ValueError("O Usuário deve ter um endereço de email.")
@@ -35,9 +34,6 @@ class UserManager(BaseUserManager):
             is_staff = True,
             is_admin = True,
         )
-        return user
-    def get_by_natural_key(self, email): 
-        return self.get(email=email)
 
 class User(AbstractBaseUser):
     #full_name  = models.CharField(max_length=255, blank=True, null=True)
