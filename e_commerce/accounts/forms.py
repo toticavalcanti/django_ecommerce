@@ -56,33 +56,37 @@ class GuestForm(forms.Form):
     email = forms.EmailField()
     
 class LoginForm(forms.Form):
-    username = forms.CharField()
+    username = forms.EmailField(label='Email')
     password = forms.CharField(widget=forms.PasswordInput)
 
-class RegisterForm(forms.Form):
-    username = forms.CharField()
-    email = forms.EmailField()
+class RegisterForm(forms.ModelForm):
+    """
+    A form for creating new users. Includes all the required
+    fields, plus a repeated password.
+    """
     password = forms.CharField(widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
+    password_2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
 
-    def clean_username(self):
-        username = self.cleaned_data.get('username')
-        qs = User.objects.filter(username=username)
-        if qs.exists():
-            raise forms.ValidationError("Esse usuário já existe, escolha outro nome.")
-        return username
-
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        qs = User.objects.filter(email=email)
-        if qs.exists():
-            raise forms.ValidationError("Esse email já existe, tente outro!")
-        return email
+    class Meta:
+        model = User
+        fields = ['email']
 
     def clean(self):
-        data = self.cleaned_data
-        password = self.cleaned_data.get('password')
-        password2 = self.cleaned_data.get('password2')
-        if password != password2:
-            raise forms.ValidationError("As senhas informadas devem ser iguais!")
-        return data
+        '''
+        Verify both passwords match.
+        '''
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        password_2 = cleaned_data.get("password_2")
+        if password is not None and password != password_2:
+            self.add_error("password_2", "Your passwords must match")
+        return cleaned_data
+
+    def save(self, commit=True):
+        # Save the provided password in hashed format
+        user = super(RegisterForm, self).save(commit=False)
+        user.set_password(self.cleaned_data["password"])
+        user.active = False # send confirmation email
+        if commit:
+            user.save()
+        return user
