@@ -1,7 +1,7 @@
 # Ecommerce Django
 
-Este é um projeto de Ecommerce construído com o framework Django. O objetivo deste projeto é criar uma plataforma de comércio eletrônico robusta e personalizável que possa ser facilmente adaptada para diferentes tipos de lojas online.
-<br/>
+Este é um projeto de Ecommerce construído com o framework Django. <br>O objetivo deste projeto é criar uma plataforma de comércio eletrônico robusta e personalizável que possa ser facilmente adaptada para diferentes tipos de lojas online.
+<br>
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/codigofluente)
 
 ## Funcionalidades Principais
