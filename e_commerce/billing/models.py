@@ -1,12 +1,19 @@
+import environ
+import stripe
 from django.conf import settings
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 
 from accounts.models import GuestEmail
 
 User = settings.AUTH_USER_MODEL
 # fulano@mail.com -> pode ter 1.000.000.000 billing profiles
 # user fulano@mail.com -> pode ter apenas 1 billing profile
+# Initialise environment variables
+env = environ.Env()
+environ.Env.read_env()
+stripe.api_key = env('STRIPE_API_KEY')
+
 class BillingProfileManager(models.Manager):
     def new_or_get(self, request):
         user = request.user
@@ -29,13 +36,24 @@ class BillingProfileManager(models.Manager):
 class BillingProfile(models.Model):
     user = models.OneToOneField(User, null = True, blank = True, on_delete = models.CASCADE)
     email = models.EmailField()
-    active = models.BooleanField(default = True)
+    active =    models.BooleanField(default = True)
     update = models.DateTimeField(auto_now = True)
-    timestamp = models.DateTimeField(auto_now_add = True)
+    timestamp   = models.DateTimeField(auto_now_add = True)
+    customer_id = models.CharField(max_length = 120, null = True, blank = True)
     # customer_id no Stripe ou Braintree ou ...
     objects = BillingProfileManager()
     def __str__(self):
         return self.email
+def billing_profile_created_receiver(sender, instance, *args, **kwargs):
+    if not instance.customer_id and instance.email:
+        print("ACTUAL API REQUEST Send to stripe/braintree")
+        customer = stripe.Customer.create(
+                email = instance.email
+            )
+        print(customer)
+        instance.customer_id = customer.id
+
+pre_save.connect(billing_profile_created_receiver, sender=BillingProfile)
 
 def user_created_receiver(sender, instance, created, *args, **kwargs):
     if created and instance.email:
