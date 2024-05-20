@@ -26,14 +26,16 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'xjmv-0^l__duq4-xp54m94bsf02lx4&1xka_ykd_(7(5#9^1o^'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
+
 # Stripe Configuration
-stripe.api_key = env('STRIPE_API_KEY')
+STRIPE_API_KEY = env('STRIPE_API_KEY')
+STRIPE_PUB_KEY = env('STRIPE_PUB_KEY')
 
 # Application definition
 
@@ -145,7 +147,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-     os.path.join(BASE_DIR, "static_local")
+    os.path.join(BASE_DIR, "e_commerce", "static_local"),
 ]
 
 STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static_cdn", "static_root")
