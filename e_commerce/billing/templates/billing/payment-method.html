@@ -5,19 +5,22 @@
 <div class='col-10 col-md-6 mx-auto'>
     <h1>Add Payment Method</h1>
     <form id="payment-form">
-      <div id="payment-element">
-        <!-- Stripe Elements will be inserted here -->
-      </div>
+      <div id="card-element"><!--Stripe.js injects the Card Element--></div>
       <button id="submit">
         <div class="spinner hidden" id="spinner"></div>
         <span id="button-text">Pay now</span>
       </button>
-      <div id="payment-message" class="hidden"></div>
+      <p id="card-error" role="alert"></p>
+      <p class="result-message hidden">
+        Payment succeeded, see the result in your
+        <a href="" target="_blank">Stripe dashboard.</a> Refresh the page to pay again.
+      </p>
     </form>
 </div>
 {% endblock %}
 
 {% block javascript %}
+<script src="{% static 'js/stripe-payment.js' %}" defer></script>
 <script src="https://js.stripe.com/v3/"></script>
 <script>
   console.log("Stripe Payment JS is being loaded");
@@ -27,7 +30,6 @@
 
   // Restante do seu script aqui...
 </script>
-<script src="{% static 'js/stripe-payment.js' %}" defer></script>
 {% endblock %}
 
 {% block css %}
