@@ -37,5 +37,4 @@ def create_payment_intent(request):
 
 def calculate_order_amount(items):
     # Substitua esta função pela sua lógica de cálculo de preços
-    # return sum(item['price'] for item in items)
-    return 1500  # preço de exemplo
+    return 1400  # preço de exemplo
