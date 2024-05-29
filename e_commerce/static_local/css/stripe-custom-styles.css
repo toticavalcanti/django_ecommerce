@@ -8,6 +8,10 @@ form {
   padding: 40px;
 }
 
+.hidden {
+  display: none;
+}
+
 input {
   border-radius: 6px;
   margin-bottom: 6px;
