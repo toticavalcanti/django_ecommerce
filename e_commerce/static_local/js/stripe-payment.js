@@ -106,7 +106,7 @@ $(document).ready(function() {
                                 const nextUrlElement = $('#next-url');
                                 const nextUrl = nextUrlElement.data('url') || '/';
                                 window.location.href = nextUrl;
-                            }, 3000);
+                            }, 5000);
                         } else {
                             console.error("Status do pagamento inesperado:", result.paymentIntent.status);
                             showMessage("Pagamento não foi bem-sucedido. Tente novamente.");

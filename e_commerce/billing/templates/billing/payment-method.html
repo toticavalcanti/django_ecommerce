@@ -19,12 +19,3 @@
   </form>
 </div>
 {% endblock %}
-
-{% block javascript %}
-<script src="https://js.stripe.com/v3/" defer></script>
-<script src="{% static 'js/stripe-payment.js' %}" defer></script>
-{% endblock %}
-
-{% block css %}
-<link rel="stylesheet" href="{% static 'css/stripe-custom-styles.css' %}">
-{% endblock %}
