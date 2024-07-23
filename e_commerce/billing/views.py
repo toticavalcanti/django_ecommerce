@@ -8,9 +8,6 @@ import json
 
 stripe.api_key = settings.STRIPE_API_KEY
 
-from django.conf import settings
-from django.shortcuts import render
-
 def payment_method_view(request):
     # Adicione um log para verificar se a chave está sendo passada
     # print(f"Publish Key na view: {settings.STRIPE_PUB_KEY}")
