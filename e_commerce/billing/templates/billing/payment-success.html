@@ -1,0 +1,10 @@
+<!-- Começo do template -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h1>Pagamento realizado com sucesso!</h1>
+    <p>Seu pedido foi processado com sucesso. Obrigado por sua compra!</p>
+    <a href="{% url 'home' %}" class="btn btn-primary">Voltar para a página inicial</a>
+</div>
+{% endblock %}
+<!-- Fim do template -->

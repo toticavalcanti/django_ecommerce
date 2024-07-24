@@ -8,6 +8,14 @@ import json
 
 stripe.api_key = settings.STRIPE_API_KEY
 
+# View para renderizar a página de sucesso do pagamento
+def payment_success_view(request):
+    return render(request, 'billing/payment-success.html')
+
+# View para renderizar a página de falha do pagamento
+def payment_failed_view(request):
+    return render(request, 'billing/payment-failed.html')
+
 def payment_method_view(request):
     # Adicione um log para verificar se a chave está sendo passada
     # print(f"Publish Key na view: {settings.STRIPE_PUB_KEY}")

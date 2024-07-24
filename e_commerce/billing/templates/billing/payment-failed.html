@@ -1,0 +1,10 @@
+<!-- Começo do template -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h1>Falha no pagamento</h1>
+    <p>Ocorreu um problema ao processar seu pagamento. Por favor, tente novamente.</p>
+    <a href="{% url 'billing-payment-method' %}" class="btn btn-primary">Tentar novamente</a>
+</div>
+{% endblock %}
+<!-- Fim do template -->
