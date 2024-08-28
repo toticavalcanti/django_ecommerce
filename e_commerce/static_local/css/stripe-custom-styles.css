@@ -1,4 +1,5 @@
-form {
+/* Estilos aplicados apenas ao formulário do Stripe */
+#payment-form {
   width: 30vw;
   min-width: 500px;
   align-self: center;
@@ -12,7 +13,7 @@ form {
   display: none;
 }
 
-input {
+#payment-form input {
   border-radius: 6px;
   margin-bottom: 6px;
   padding: 12px;
@@ -59,8 +60,8 @@ input {
   margin-bottom: 32px;
 }
 
-/* Buttons and links */
-button {
+/* Buttons and links específicos do formulário Stripe */
+#payment-form button {
   background: #5469d4;
   color: #ffffff;
   font-family: Arial, sans-serif;
@@ -76,11 +77,11 @@ button {
   width: 100%;
 }
 
-button:hover {
+#payment-form button:hover {
   filter: contrast(115%);
 }
 
-button:disabled {
+#payment-form button:disabled {
   opacity: 0.5;
   cursor: default;
 }
@@ -163,7 +164,7 @@ button:disabled {
 }
 
 @media only screen and (max-width: 600px) {
-  form {
+  #payment-form {
     width: 80vw;
   }
 }
