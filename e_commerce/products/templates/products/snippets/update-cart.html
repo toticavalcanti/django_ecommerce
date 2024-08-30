@@ -1,13 +1,11 @@
-<form class='form-product-ajax flex-grow-1' method='POST' action='{% url "cart:update" %}' 
-  data-endpoint='{% url "cart:update" %}'>
+<form class='form-product-ajax flex-grow-1' method='POST' action='{% url "cart:update" %}' data-endpoint='{% url "cart:update" %}'>
   {% csrf_token %}
   <input type='hidden' name='product_id' value='{{ product.id }}' />
-
   <span class='submit-span w-100'>
     {% if product in cart.products.all %}
-      <button type='submit' class='btn btn-link btn-responsive p-0'>No carrinho (Excluir)</button>
+      <button type='submit' class='btn btn-outline-danger btn-sm w-100'>Remover</button>
     {% else %}
-      <button type='submit' class='btn btn-success btn-responsive btn btn-primary btn-md w-40 mr-2'>Adicionar</button>
+      <button type='submit' class='btn btn-success btn-sm w-100'>Adicionar</button>
     {% endif %}
   </span>
 </form>

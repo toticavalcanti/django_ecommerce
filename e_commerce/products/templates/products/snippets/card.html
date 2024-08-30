@@ -11,7 +11,9 @@
     <p class="card-text flex-grow-1">{{ instance.description|truncatewords:14 }}</p>
   </div>
   <div class="card-footer d-flex p-2">
-    <a href="{{ instance.get_absolute_url }}" class="btn btn-primary btn-md mr-2">Detalhe</a>
-    {% include 'products/snippets/update-cart.html' with product=instance cart=cart %}
+    <div class="d-flex justify-content-between w-100">
+      <a href="{{ instance.get_absolute_url }}" class="btn btn-primary btn-sm flex-grow-1 me-2 mr-2">Detalhe</a>
+      {% include 'products/snippets/update-cart.html' with product=instance cart=cart %}
+    </div>
   </div>
 </div>
