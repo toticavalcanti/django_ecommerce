@@ -100,10 +100,14 @@ $(document).ready(function(){
       // console.log("Removido", data.removed)
       const submitSpan = thisForm.find(".submit-span")
       if(data.added){
-        submitSpan.html("No carrinho <button type='submit' class='btn btn-link'>Excluir</button>")
-      } else {
-        submitSpan.html("<button type='submit' class='btn btn-success'>Adicionar</button>")
-      }
+        submitSpan.html("No carrinho <button type='submit' class='btn btn-link btn-sm w-100'>Excluir</button>");
+    } else {
+        submitSpan.html("<button type='submit' class='btn btn-success btn-sm w-100 mr-lg-2'>Adicionar</button>");
+    }
+    
+    
+    
+    
       const navbarCount = $(".navbar-cart-count")
       navbarCount.text(data.cartItemCount)
       const currentPath = window.location.href

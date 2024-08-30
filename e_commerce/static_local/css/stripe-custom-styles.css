@@ -139,6 +139,12 @@
   animation: loading 2s infinite ease;
 }
 
+@media (max-width: 576px) {
+  .btn {
+      font-size: 0.75rem; /* Reduz a fonte em telas pequenas */
+  }
+}
+
 @-webkit-keyframes loading {
   0% {
     -webkit-transform: rotate(0deg);
