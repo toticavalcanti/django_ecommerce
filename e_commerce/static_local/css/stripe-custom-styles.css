@@ -39,6 +39,36 @@
   display: none;
 }
 
+.card-img-wrapper {
+  height: 250px; /* Aumentando a altura do contêiner da imagem */
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-img-top {
+  width: 100%; /* Garante que a imagem ocupe toda a largura disponível */
+  height: 100%; /* Garante que a imagem ocupe toda a altura disponível */
+  object-fit: contain; /* Redimensiona a imagem para caber no contêiner sem cortar */
+  object-position: center; /* Centraliza a imagem no contêiner */
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Garante que o conteúdo comece no topo */
+  min-height: 150px; /* Defina uma altura mínima para alinhar os textos */
+}
+
+.card-title {
+  margin-bottom: auto; /* Permite que o título tenha um pouco de espaço */
+}
+
+.card-text {
+  margin-top: auto; /* O texto começa após o título */
+}
+
 #card-error {
   color: rgb(105, 115, 134);
   text-align: left;

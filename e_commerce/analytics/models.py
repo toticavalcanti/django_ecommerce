@@ -10,13 +10,13 @@ from .utils import get_client_ip
 
 User = settings.AUTH_USER_MODEL
 FORCE_SESSION_TO_ONE = getattr(settings, 'FORCE_SESSION_TO_ONE', False)
-FORCE_INACTIVE_USER_ENDSESSION= getattr(settings, 'FORCE_INACTIVE_USER_ENDSESSION', False)
+FORCE_INACTIVE_USER_ENDSESSION = getattr(settings, 'FORCE_INACTIVE_USER_ENDSESSION', False)
 
 class ObjectViewed(models.Model):
-    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE) # specific user, instance.id
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
     ip_address = models.CharField(max_length=220, blank=True, null=True)
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE) # Product, Order, Cart, Address...
-    object_id = models.PositiveIntegerField() # User id, Product id, Order id
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -24,23 +24,24 @@ class ObjectViewed(models.Model):
         return f"{self.content_object} viewed on {self.timestamp}"
 
     class Meta:
-        ordering = ['-timestamp'] # most recent saved show up first
+        ordering = ['-timestamp']
         verbose_name = 'Object viewed'
         verbose_name_plural = 'Objects viewed'
 
 def object_viewed_receiver(sender, instance, request, *args, **kwargs):
-    c_type = ContentType.objects.get_for_model(sender) # instance.__class__
+    c_type = ContentType.objects.get_for_model(sender)
+    user = request.user if request.user.is_authenticated else None
     new_view_obj = ObjectViewed.objects.create(
-        user = request.user,
-        content_type = c_type,
-        object_id = instance.id,
-        ip_address = get_client_ip(request)
+        user=user,
+        content_type=c_type,
+        object_id=instance.id,
+        ip_address=get_client_ip(request)
     )
 
 object_viewed_signal.connect(object_viewed_receiver)
 
 class UserSession(models.Model):
-    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE) # specific user, instance.id
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
     ip_address = models.CharField(max_length=220, blank=True, null=True)
     session_key = models.CharField(max_length=100, blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -60,7 +61,6 @@ class UserSession(models.Model):
         self.save()
 
     def save(self, *args, **kwargs):
-        # Se 'active' for False e 'ended' ainda não for True, encerra a sessão
         if not self.active and not self.ended:
             self.end_session()
         super().save(*args, **kwargs)
@@ -76,14 +76,12 @@ def post_save_session_receiver(sender, instance, created, *args, **kwargs):
 if FORCE_SESSION_TO_ONE:
     post_save.connect(post_save_session_receiver, sender=UserSession)
 
-
 def post_save_user_changed_receiver(sender, instance, created, *args, **kwargs):
     if not created:
         if instance.is_active == False:
             qs = UserSession.objects.filter(user=instance.user, ended=False, active=False)
             for i in qs:
                 i.end_session()
-
 
 if FORCE_INACTIVE_USER_ENDSESSION:
     post_save.connect(post_save_user_changed_receiver, sender=User)
@@ -93,10 +91,9 @@ def user_logged_in_receiver(sender, instance, request, *args, **kwargs):
     ip_address = get_client_ip(request)
     session_key = request.session.session_key
     UserSession.objects.create(
-            user=user,
-            ip_address=ip_address,
-            session_key=session_key
-        )
-
+        user=user,
+        ip_address=ip_address,
+        session_key=session_key
+    )
 
 user_logged_in.connect(user_logged_in_receiver)
