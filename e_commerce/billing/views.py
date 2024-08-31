@@ -1,9 +1,11 @@
+from decimal import Decimal
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from products.models import Product
+from carts.models import Cart
 from django.conf import settings
 import stripe
 import json
@@ -43,8 +45,11 @@ def create_payment_intent(request):
         return JsonResponse({'error': str(e)}, status=400)
 
 def calculate_order_amount(items):
+    cart = Cart.objects.first()  # Ou use um método que pegue o carrinho correto
     total_amount = 0
     for item in items:
-        product = get_object_or_404(Product, id=item['id'])
+        product = Product.objects.get(id=item['id'])
         total_amount += product.price * item['quantity']
-    return int(total_amount * 100)  # o valor deve estar em centavos
+    
+    # Reutilizar a taxa definida no modelo Cart
+    return int(total_amount * Decimal(cart.total / cart.subtotal) * 100)
