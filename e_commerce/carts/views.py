@@ -34,6 +34,20 @@ def cart_detail_api_view(request):
 def cart_home(request):
     cart_obj, new_obj = Cart.objects.new_or_get(request)
     return render(request, "carts/home.html", {"cart": cart_obj})
+from django.http import JsonResponse
+
+def cart_get_items(request):
+    cart_obj, new_obj = Cart.objects.new_or_get(request)
+    items = []
+    for product in cart_obj.products.all():
+        item = {
+            'id': product.id,
+            'name': product.title,
+            'quantity': 1,  # Aqui você deveria usar a quantidade real do produto no carrinho
+            'price': str(product.price),
+        }
+        items.append(item)
+    return JsonResponse({'items': items})
 
 def cart_update(request):
     product_id = request.POST.get('product_id')

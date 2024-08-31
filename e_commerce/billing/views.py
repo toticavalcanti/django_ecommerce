@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
+from products.models import Product
 from django.conf import settings
 import stripe
 import json
@@ -41,5 +43,8 @@ def create_payment_intent(request):
         return JsonResponse({'error': str(e)}, status=400)
 
 def calculate_order_amount(items):
-    # Substitua esta função pela sua lógica de cálculo de preços
-    return 1400  # preço de exemplo
+    total_amount = 0
+    for item in items:
+        product = get_object_or_404(Product, id=item['id'])
+        total_amount += product.price * item['quantity']
+    return int(total_amount * 100)  # o valor deve estar em centavos
