@@ -47,13 +47,6 @@
   justify-content: center;
 }
 
-.card-img-top {
-  width: 100%; /* Garante que a imagem ocupe toda a largura disponível */
-  height: 100%; /* Garante que a imagem ocupe toda a altura disponível */
-  object-fit: contain; /* Redimensiona a imagem para caber no contêiner sem cortar */
-  object-position: center; /* Centraliza a imagem no contêiner */
-}
-
 .card-body {
   display: flex;
   flex-direction: column;

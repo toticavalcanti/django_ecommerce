@@ -42,7 +42,7 @@ $(document).ready(function () {
                   cardElement.mount("#payment-element");
                   console.log("Elemento do cartão montado");
               },
-              error: function (xhr, status, error) {
+              error: function (error) {
                   console.error("Erro ao inicializar os elementos do Stripe:", error);
               },
           });
