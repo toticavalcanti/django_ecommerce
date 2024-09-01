@@ -5,7 +5,7 @@ from .views import (
     checkout_home,
     cart_update,
     checkout_done_view,
-    cart_get_items,  # Certifique-se de que esta view está importada
+    cart_get_items,
 )
 
 app_name = "carts"
@@ -15,5 +15,5 @@ urlpatterns = [
     path('checkout/success/', checkout_done_view, name='success'),
     path('checkout/', checkout_home, name='checkout'),
     path('update/', cart_update, name='update'),
-    path('get-items/', cart_get_items, name='cart-get-items'),  # Corrigido para usar a view cart_get_items
+    path('get-items/', cart_get_items, name='cart-get-items'),
 ]
