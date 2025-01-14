@@ -8,10 +8,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
 <!-- Stripe JS -->
 <script src="https://js.stripe.com/v3/"></script>
-<!-- Custom Stripe payment JS --> 
-<script src='{% static "js/stripe-payment.js" %}' defer></script>
-<!-- eCommerce Custom JS -->
-<script src='{% static "js/ecommerce.js" %}'></script>
-<!-- Django Secure AJAX JS --> 
-<script src='{% static "js/csrf.ajax.js" %}'></script>
+<!-- Modular JS Files -->
+<script src="{% static 'js/stripe/stripe-payment.js' %}" defer></script>
+<script src="{% static 'js/ecommerce/search.js' %}" defer></script>
+<script src="{% static 'js/ecommerce/contact.js' %}" defer></script>
+<script src="{% static 'js/ecommerce/cart.js' %}" defer></script>
+<!-- Temporary Legacy File -->
+<script src="{% static 'js/csrf.ajax.js' %}" defer></script>
+
 
