@@ -104,3 +104,14 @@ class RegisterView(CreateView):
 #     if form.is_valid():
 #         form.save()
 #     return render(request, "accounts/register.html", context)
+class RegisterView(CreateView):
+    form_class = RegisterForm
+    template_name = 'accounts/register.html'
+    success_url = '/login/'
+
+    def form_valid(self, form):
+        user = form.save(commit=False)
+        user.is_verified = False  # Inicialmente não verificado
+        user.save()
+        # Lógica para enviar e-mail de verificação pode ser adicionada aqui
+        return super().form_valid(form)

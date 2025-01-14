@@ -44,6 +44,7 @@ class User(AbstractBaseUser):
     active      = models.BooleanField(default=True) # can do login
     staff       = models.BooleanField(default=False) # staff user, non superuser
     admin       = models.BooleanField(default=False) #superuser
+    is_verified = models.BooleanField(default=False)  # Email Verification
     timestamp    = models.DateTimeField(auto_now_add=True)
     # confirm    = models.BooleanField(default=False)
     # confirmed_date    = models.DateTimeField(auto_now_add=True)
