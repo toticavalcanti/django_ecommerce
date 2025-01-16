@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
+
 User = get_user_model()
 
 class UserAdminCreationForm(forms.ModelForm):
@@ -13,7 +14,7 @@ class UserAdminCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['email']
+        fields = ['email', 'full_name']
 
     def clean(self):
         '''
@@ -30,10 +31,10 @@ class UserAdminCreationForm(forms.ModelForm):
         # Save the provided password in hashed format
         user = super(UserAdminCreationForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password"])
+        user.is_verified = False
         if commit:
             user.save()
         return user
-
 
 class UserAdminChangeForm(forms.ModelForm):
     """A form for updating users. Includes all the fields on
@@ -44,7 +45,7 @@ class UserAdminChangeForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['full_name', 'email', 'password', 'active', 'admin']
+        fields = ['full_name', 'email', 'password', 'active', 'admin', 'is_verified']
 
     def clean_password(self):
         # Regardless of what the user provides, return the initial value.
@@ -69,7 +70,7 @@ class RegisterForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['email']
+        fields = ['email', 'full_name']  # [ADDED] Incluído full_name no formulário
 
     def clean(self):
         '''
@@ -86,7 +87,7 @@ class RegisterForm(forms.ModelForm):
         # Save the provided password in hashed format
         user = super(RegisterForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password"])
-        # user.active = False # send confirmation email
+        user.is_verified = False  # [ADDED] Usuários não verificados por padrão
         if commit:
             user.save()
         return user

@@ -1,6 +1,9 @@
 import os
 import environ
-import stripe
+import logging
+
+# Definindo o logger
+logger = logging.getLogger(__name__)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -47,6 +50,7 @@ INSTALLED_APPS = [
     'products',
     'search',
     'tags',
+    'categories',
 ]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -140,3 +144,22 @@ STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static_cdn", "static_root
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static_cdn", "media_root")
+
+logger.info(f"Static files directory: {STATIC_ROOT}")
+logger.info(f"Media files directory: {MEDIA_ROOT}")
+
+# Logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+}

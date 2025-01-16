@@ -164,3 +164,4 @@ $(document).ready(function () {
         initializeStripe();
     }
   });
+  

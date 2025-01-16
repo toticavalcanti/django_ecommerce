@@ -1,17 +1,16 @@
 from django.shortcuts import render, redirect
 from django.utils.http import url_has_allowed_host_and_scheme
-
 from billing.models import BillingProfile
 from .forms import AddressForm
 from .models import Address
+
 def checkout_address_create_view(request):
     form = AddressForm(request.POST or None)
-    context = {
-        "form": form
-    }
+    context = {"form": form}
     next_ = request.GET.get('next')
     next_post = request.POST.get('next')
     redirect_path = next_ or next_post or None
+
     if form.is_valid():
         print(request.POST)
         instance = form.save(commit=False)
@@ -24,12 +23,17 @@ def checkout_address_create_view(request):
             request.session[address_type + "_address_id"] = instance.id
             print(address_type + "_address_id")
         else:
-            print("Error here")
+            form.add_error(None, "Perfil de cobrança é necessário.")
+            print("Erro: Perfil de cobrança não encontrado.")
             return redirect("cart:checkout")
 
         if url_has_allowed_host_and_scheme(redirect_path, request.get_host()):
             return redirect(redirect_path)
-    return redirect("cart:checkout") 
+    else:
+        for field, errors in form.errors.items():
+            print(f"Validation error in {field}: {errors}")
+
+    return render(request, "addresses/form.html", context)
 
 def checkout_address_reuse_view(request):
     if request.user.is_authenticated:
