@@ -1,14 +1,22 @@
 <div class="card h-100">
   <div class="card-img-wrapper">
-    {% if instance.image %}
-    <a href="{{ instance.get_absolute_url }}">
-      <img src="{{ instance.image.url }}" class="card-img-top" alt="{{ instance.title }} logo">
-    </a>
+    {% if instance.images.all %}
+      <a href="{{ instance.get_absolute_url }}">
+        <img src="{{ instance.images.first.image.url }}" class="card-img-top" alt="{{ instance.images.first.alt_text|default:instance.title }}">
+      </a>
     {% endif %}
   </div>
   <div class="card-body d-flex flex-column">
     <h5 class="card-title">{{ instance.title }}</h5>
     <p class="card-text flex-grow-1">{{ instance.description|truncatewords:14 }}</p>
+    {% if instance.discount_price %}
+      <p class="card-text">
+        <span class="text-muted text-decoration-line-through">R$ {{ instance.price }}</span>
+        <span class="text-danger">R$ {{ instance.discount_price }}</span>
+      </p>
+    {% else %}
+      <p class="card-text">R$ {{ instance.price }}</p>
+    {% endif %}
   </div>
   <div class="card-footer d-flex p-2">
     <div class="d-flex justify-content-between w-100">

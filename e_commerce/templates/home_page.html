@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% load static %}
 
 <title>Home Page Template</title>
@@ -9,25 +8,23 @@
 {% endblock %}
     
 {% block content %}
-    <div class='text-center'>
-         <h1>{{ title }}</h1>
-             <p>{{ content }}</p>
+    <div class='text-center mb-4'>
+         <h1 class="display-4 text-primary">Vitrine Digital</h1>
+         <p class="lead text-muted">Sua melhor experiência em compras online</p>
     </div>
     
-	<div class='row'>
-		<div class='col'>
-		<img src="{% static 'img/eCommerce.jpeg' %}" class='img-fluid' />
-		<p>{{ content }}</p>
-		</div>
-	</div>
+    <div class='row mb-5 pb-4'>
+        <div class='col'>
+            <img src="{% static 'img/eCommerce.jpg' %}" class='img-fluid w-100' style="max-height: 600px; object-fit: cover;" />
+        </div>
+    </div>
 
-	{% if request.user.is_authenticated %}
-		<div class='row'>
-		<div class='col'>
-			<h1>Premium</h1>
-			<p>{{ premium_content }}</p>
-		</div>
-		</div>
-	{% endif %}
-    
+    {% if request.user.is_authenticated %}
+        <div class='row mt-4'>
+            <div class='col'>
+                <h1>Premium</h1>
+                <p>{{ premium_content }}</p>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

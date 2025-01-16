@@ -1,16 +1,27 @@
 from django.contrib import admin
+from django.utils.html import format_html  # Import necessário para o método format_html
 from .models import Product, ProductImage
 
+# Inline para gerenciar imagens com preview
+class ProductImageInline(admin.TabularInline):  # ou admin.StackedInline se preferir
+    model = ProductImage
+    extra = 1  # Número de campos vazios extras para adicionar
+    readonly_fields = ['image_preview']  # Adicionando campo de visualização da imagem
+
+    def image_preview(self, obj):
+        """Gera o HTML para exibir o preview da imagem."""
+        if obj.image:
+            return format_html('<img src="{}" style="width: 150px; height: auto;" />', obj.image.url)
+        return "Nenhuma imagem disponível"
+
+    image_preview.short_description = "Preview"  # Nome da coluna no admin
+
+# Configuração do modelo Product no admin
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('title', 'sku', 'price', 'stock', 'category', 'featured', 'active')  # Colunas exibidas
-    list_filter = ('category', 'active', 'featured')  # Filtros laterais
-    search_fields = ('title', 'sku', 'description')  # Campos de busca
-    prepopulated_fields = {'slug': ('title',)}  # Preenche o slug automaticamente com base no título
-    ordering = ('-timestamp',)  # Ordena os produtos do mais recente para o mais antigo
-
-@admin.register(ProductImage)
-class ProductImageAdmin(admin.ModelAdmin):
-    list_display = ('product', 'image', 'alt_text')  # Exibe produto, imagem e texto alternativo
-    search_fields = ('product__title', 'alt_text')  # Busca por título do produto ou texto alternativo
-    list_filter = ('product',)  # Permite filtrar por produto
+    inlines = [ProductImageInline]
+    list_display = ['title', 'price', 'stock', 'active']  # Colunas exibidas na listagem
+    list_filter = ['active', 'featured']  # Filtros no painel lateral
+    search_fields = ['title', 'description']  # Campos para pesquisa
+    prepopulated_fields = {"slug": ("title",)}  # Preenchimento automático do campo slug
+    ordering = ['-timestamp']  # Ordenação padrão (mais recente primeiro)

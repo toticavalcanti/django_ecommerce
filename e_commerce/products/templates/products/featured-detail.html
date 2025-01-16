@@ -1,5 +1,7 @@
 {{ object.title }} 
-{{ object.description }} 
-{% if object.image %}
-    <img src='{{ object.image.url }}' class='img-fluid'/>
+{{ object.description }}
+{% if object.images.all %}
+    {% for image in object.images.all %}
+        <img src="{{ image.image.url }}" class="img-fluid" alt="{{ image.alt_text|default:object.title }}">
+    {% endfor %}
 {% endif %}
