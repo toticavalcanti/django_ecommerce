@@ -73,8 +73,9 @@ class ProductDetailSlugView(ObjectViewedMixin, DetailView):
 
 
 class ProductDetailView(ObjectViewedMixin, DetailView):
-    """Detalhes de um produto utilizando o ID como identificador."""
+    """Detalhes de um produto utilizando o slug como identificador."""
     template_name = "products/detail.html"
+    model = Product  # Define o modelo diretamente
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -83,12 +84,11 @@ class ProductDetailView(ObjectViewedMixin, DetailView):
         return context
 
     def get_object(self, *args, **kwargs):
-        pk = self.kwargs.get('pk')
-        instance = Product.objects.get_by_id(pk)
+        slug = self.kwargs.get('slug')  # Busca pelo slug na URL
+        instance = Product.objects.filter(slug=slug).first()
         if instance is None:
             raise Http404("Esse produto não existe!")
         return instance
-
 
 def product_detail_view(request, pk=None, *args, **kwargs):
     """Detalhes de um produto utilizando Function-Based View."""

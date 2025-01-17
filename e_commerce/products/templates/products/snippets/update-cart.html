@@ -1,9 +1,26 @@
-<!-- Path: templates/products/snippets/update-cart.html -->
-<form class="form-product-ajax" method="POST" action="{% url 'cart:update' %}">
-  {% csrf_token %}
-  <input type="hidden" name="product_id" value="{{ product.id }}">
-  <div class="d-flex align-items-center">
-    <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control form-control-sm me-2" style="width: 70px;">
-    <button type="submit" class="btn btn-success btn-sm">Adicionar</button>
-  </div>
-</form>
+  <!-- Path: templates/products/snippets/update-cart.html -->
+  <form class="form-product-ajax" method="POST" action="{% url 'cart:update' %}">
+    {% csrf_token %}
+    <input type="hidden" name="product_id" value="{{ product.id }}">
+    <div class="row g-2 align-items-center">
+      <div class="col-auto">
+        <input 
+          type="number" 
+          name="quantity" 
+          value="1" 
+          min="1" 
+          max="{{ product.stock }}" 
+          class="form-control form-control-sm text-center" 
+          style="width: 80px;"
+        >
+      </div>
+      <div class="col-auto">
+        <button 
+          type="submit" 
+          class="btn btn-primary btn-sm"
+        >
+          Adicionar
+        </button>
+      </div>
+    </div>
+  </form>
