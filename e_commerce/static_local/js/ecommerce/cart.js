@@ -1,11 +1,11 @@
 $(document).ready(function () {
-    // Cart + Add Product
+    // Intercepta os formulários de adicionar/remover produtos
     const productForm = $(".form-product-ajax");
 
     productForm.submit(function (event) {
         event.preventDefault();
         const thisForm = $(this);
-        const actionEndpoint = thisForm.attr("data-endpoint");
+        const actionEndpoint = thisForm.attr("action");
         const httpMethod = thisForm.attr("method");
         const formData = thisForm.serialize();
 
@@ -15,70 +15,76 @@ $(document).ready(function () {
             data: formData,
             success: function (data) {
                 const submitSpan = thisForm.find(".submit-span");
+
+                // Atualiza o botão com base na resposta
                 if (data.added) {
                     submitSpan.html(`
-                        <button type='submit' class='btn btn-outline-danger btn-sm w-100'>Remover</button>
+                        <button type="submit" class="btn btn-outline-danger btn-sm w-100">Remover</button>
                     `);
                 } else {
                     submitSpan.html(`
-                        <button type='submit' class='btn btn-success btn-sm w-100'>Adicionar</button>
+                        <button type="submit" class="btn btn-success btn-sm w-100">Adicionar</button>
                     `);
                 }
 
+                // Atualiza o número de itens no carrinho no navbar
                 const navbarCount = $(".navbar-cart-count");
                 navbarCount.text(data.cartItemCount);
 
-                const currentPath = window.location.href;
-                if (currentPath.indexOf("cart") !== -1) {
+                // Atualiza dinamicamente a tabela do carrinho, se necessário
+                if (window.location.href.indexOf("cart") !== -1) {
                     refreshCart();
                 }
             },
             error: function () {
                 $.alert({
-                    title: "Oops!",
-                    content: "Ocorreu um erro, tente novamente mais tarde!",
+                    title: "Erro!",
+                    content: "Ocorreu um problema ao processar sua solicitação.",
                     theme: "modern",
                 });
             },
         });
     });
 
+    // Atualiza a tabela do carrinho dinamicamente
     function refreshCart() {
         const cartTable = $(".cart-table");
         const cartBody = cartTable.find(".cart-body");
-        const productsRow = cartBody.find(".cart-product");
-        const currentUrl = window.location.href;
         const refreshCartUrl = "/cart/get-items/";
-        const refreshCartMethod = "GET";
 
         $.ajax({
             url: refreshCartUrl,
-            method: refreshCartMethod,
+            method: "GET",
             success: function (data) {
-                const hiddenCartItemRemoveForm = $(".cart-item-remove-form");
                 if (data.items.length > 0) {
-                    productsRow.html("");
+                    cartBody.html("");
                     let i = data.items.length;
+
                     $.each(data.items, function (index, value) {
-                        const newCartItemRemove = hiddenCartItemRemoveForm.clone();
-                        newCartItemRemove.css("display", "block");
-                        newCartItemRemove.find(".cart-item-product-id").val(value.id);
-                        cartBody.prepend(
-                            `<tr>
+                        cartBody.append(`
+                            <tr class="cart-product">
                                 <th scope="row">${i}</th>
                                 <td><a href="${value.url}">${value.name}</a></td>
                                 <td>${value.quantity}</td>
                                 <td>${value.price}</td>
                                 <td>${value.total}</td>
-                                <td>${newCartItemRemove.html()}</td>
-                             </tr>`
-                        );
+                                <td>
+                                    <form method="POST" action="/cart/update/" class="form-product-ajax">
+                                        <input type="hidden" name="product_id" value="${value.id}">
+                                        <input type="number" name="quantity" value="0" class="d-none">
+                                        <button type="submit" class="btn btn-danger btn-sm">Remover</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        `);
                         i--;
                     });
-                    cartBody.find(".cart-subtotal").text(data.subtotal);
-                    cartBody.find(".cart-total").text(data.total);
+
+                    $(".cart-subtotal").text(`R$ ${data.subtotal}`);
+                    $(".cart-total").text(`R$ ${data.total}`);
                 } else {
-                    window.location.href = currentUrl;
+                    // Recarrega a página para mostrar o carrinho vazio
+                    window.location.href = window.location.href;
                 }
             },
             error: function () {

@@ -39,25 +39,17 @@
         <li class="nav-item {% if request.path == register %} active {% endif %}"> 
           <a class="nav-link" href="{{ register_url }}">Registrar-se</a> 
         </li>
-      {% endif %}
-      <li class="nav-item {% if request.path == cart_url %} active {% endif %}">
-        <a class="nav-link" href="{{ cart_url }}">
-          <span class="navbar-cart-count">
-            {{ request.session.cart_items }}
-          </span>
-          <i class="fa fa-shopping-cart"></i>
-        </a>
-      </li>
-        <!-- <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Dropdown link
+        {% endif %}
+        <li class="nav-item {% if request.path == cart_url %} active {% endif %}">
+          <a class="nav-link" href="{{ cart_url }}">
+            <span class="navbar-cart-count">
+              {% with request.session.cart_items|default:0 as cart_items %}
+                {{ cart_items }}
+              {% endwith %}
+            </span>
+            <i class="fa fa-shopping-cart"></i>
           </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <a class="dropdown-item" href="#">Something else here</a>
-          </div>
-        </li> -->
+        </li>
       </ul>
       {% include 'search/snippets/search-form.html' %}
     </div>

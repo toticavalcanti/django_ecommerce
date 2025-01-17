@@ -1,27 +1,58 @@
-<div class="card h-100">
-  <div class="card-img-wrapper">
+<!-- Path: templates/products/snippets/card.html -->
+{% load static %}
+<div class="card h-100 shadow-sm">
+  <div class="card-img-wrapper position-relative">
     {% if instance.images.all %}
       <a href="{{ instance.get_absolute_url }}">
-        <img src="{{ instance.images.first.image.url }}" class="card-img-top" alt="{{ instance.images.first.alt_text|default:instance.title }}">
+        <img src="{{ instance.images.first.image.url }}" class="card-img-top rounded" alt="{{ instance.images.first.alt_text|default:instance.title }}">
       </a>
+    {% else %}
+      <img src="{% static 'placeholder.jpg' %}" class="card-img-top rounded" alt="Placeholder">
+    {% endif %}
+    {% if instance.discount_price %}
+      <span class="badge bg-danger position-absolute top-0 start-0 m-2">Promoção</span>
     {% endif %}
   </div>
   <div class="card-body d-flex flex-column">
-    <h5 class="card-title">{{ instance.title }}</h5>
-    <p class="card-text flex-grow-1">{{ instance.description|truncatewords:14 }}</p>
+    <h5 class="card-title text-center text-uppercase fw-bold">{{ instance.title }}</h5>
+    <p class="card-text text-muted text-center flex-grow-1">{{ instance.description|truncatewords:14 }}</p>
     {% if instance.discount_price %}
-      <p class="card-text">
+      <p class="card-text text-center">
         <span class="text-muted text-decoration-line-through">R$ {{ instance.price }}</span>
-        <span class="text-danger">R$ {{ instance.discount_price }}</span>
+        <span class="text-danger fw-bold">R$ {{ instance.discount_price }}</span>
       </p>
     {% else %}
-      <p class="card-text">R$ {{ instance.price }}</p>
+      <p class="card-text text-center fw-bold">R$ {{ instance.price }}</p>
     {% endif %}
   </div>
-  <div class="card-footer d-flex p-2">
-    <div class="d-flex justify-content-between w-100">
-      <a href="{{ instance.get_absolute_url }}" class="btn btn-primary btn-sm flex-grow-1 me-2 mr-2">Detalhe</a>
-      {% include 'products/snippets/update-cart.html' with product=instance cart=cart %}
-    </div>
+  <div class="card-footer bg-light border-0">
+    <form 
+      method="POST" 
+      action="{% url 'cart:update' %}" 
+      class="d-flex align-items-center justify-content-between form-product-ajax"
+    >
+      {% csrf_token %}
+      <input type="hidden" name="product_id" value="{{ instance.id }}">
+      <!-- Campo de Quantidade -->
+      <div class="me-2">
+        <input 
+          type="number" 
+          name="quantity" 
+          value="1" 
+          min="1" 
+          max="{{ instance.stock }}" 
+          class="form-control form-control-sm text-center"
+          style="width: 60px;"
+        >
+      </div>
+      <!-- Botão Adicionar -->
+      <button 
+        type="submit" 
+        class="btn btn-primary btn-sm"
+        style="padding: 0.375rem 0.75rem; font-size: 14px;"
+      >
+        Adicionar
+      </button>
+    </form>
   </div>
 </div>

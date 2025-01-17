@@ -51,6 +51,7 @@ class Product(models.Model):  # product_category
     category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.SET_NULL, related_name="products")
     sku = models.CharField(max_length=20, unique=True, null=True, blank=True)
     featured = models.BooleanField(default=False)
+    updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -83,6 +84,8 @@ class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
     image = models.ImageField(upload_to='products/')
     alt_text = models.CharField(max_length=255, null=True, blank=True)  # Texto alternativo para SEO
-
+    is_featured = models.BooleanField(default=False)
+    order = models.PositiveIntegerField(default=0)
+    timestamp = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return f"Image for {self.product.title}"

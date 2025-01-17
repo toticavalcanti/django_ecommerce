@@ -6,6 +6,7 @@ from .views import (
     cart_update,
     checkout_done_view,
     cart_get_items,
+    add_to_cart,
 )
 
 app_name = "carts"
@@ -16,4 +17,5 @@ urlpatterns = [
     path('checkout/', checkout_home, name='checkout'),
     path('update/', cart_update, name='update'),
     path('get-items/', cart_get_items, name='cart-get-items'),
+    path('add/', add_to_cart, name='add_to_cart'),
 ]

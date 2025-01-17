@@ -1,44 +1,57 @@
 {% extends "base.html" %}
+{% load custom_filters %}
+
 {% block content %}
-  <h1>Cart</h1>
-  {% if cart.products.exists %}
-  <table class="table cart-table">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Nome</th>
-        <th>Preço</th>
-      </tr>
-    </thead>
-    <tbody class="cart-body">
-      {% for product in cart.products.all %}
-      <tr class="cart-product">
-        <th scope="row">{{ forloop.counter }}</th>
-        <td>
-          <a href='{{ product.get_absolute_url }}'>{{ product.title }}</a>
-          {% include 'carts/snippets/remove-product.html' with product_id=product.id %}
-        </td>
-        <td>{{ product.price }}</td>
-      </tr>
-      {% endfor %}
-      <tr>
-        <td colspan="2"></td>
-        <td><b>Subtotal</b> $<span class="cart-subtotal"> {{ cart.subtotal }} </span> </td>
-      </tr>
-      <tr>
-        <td colspan="2"></td>
-        <td><b>Total</b> $<span class="cart-total"> {{ cart.total }} </span> </td>
-      </tr>
-      <tr>
-        <td colspan="2"></td>
-        <td><a class='btn btn-lg btn-success' href='{% url "cart:checkout" %}'>Conferir compra</a></td>
-      </tr>
-    </tbody>
-  </table>
-  <div class="cart-item-remove-form" class='cart-item-remove-form' style='display:none'>
-    {% include 'carts/snippets/remove-product.html' %}
-  </div>
+  <h1>Carrinho</h1>
+  {% if cart.cartproduct_set.exists %}
+    <table class="table cart-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Produto</th>
+          <th>Quantidade</th>
+          <th>Preço Unitário</th>
+          <th>Total</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody class="cart-body">
+        {% for cart_product in cart.cartproduct_set.all %}
+          <tr class="cart-product">
+            <td>{{ forloop.counter }}</td>
+            <td>{{ cart_product.product.title }}</td>
+            <td>
+              <form method="POST" action="{% url 'cart:update' %}" class="form-product-ajax">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ cart_product.product.id }}">
+                <input 
+                  type="number" 
+                  name="quantity" 
+                  value="{{ cart_product.quantity }}" 
+                  min="1" 
+                  max="{{ cart_product.product.stock }}" 
+                  class="form-control form-control-sm"
+                  onchange="this.form.submit()" 
+                >
+              </form>
+            </td>
+            <td>R$ {{ cart_product.product.get_final_price }}</td>
+            <td>R$ {{ cart_product.quantity|multiply:cart_product.product.get_final_price }}</td>
+            <td>
+              <form method="POST" action="{% url 'cart:update' %}" class="form-product-ajax">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ cart_product.product.id }}">
+                <input type="hidden" name="quantity" value="0">
+                <button type="submit" class="btn btn-danger btn-sm">Remover</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p><strong>Subtotal:</strong> <span class="cart-subtotal">R$ {{ cart.subtotal }}</span></p>
+    <p><strong>Total:</strong> <span class="cart-total">R$ {{ cart.total }}</span></p>
   {% else %}
-    <p class='lead'>Carrinho vazio</p>
+    <p>Seu carrinho está vazio!</p>
   {% endif %}
-{% endblock %}
+{% endblock content %}

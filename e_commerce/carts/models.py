@@ -1,8 +1,7 @@
 from decimal import Decimal
 from django.conf import settings
 from django.db import models
-from django.db.models.signals import pre_save, post_save, m2m_changed
-
+from django.db.models.signals import pre_save
 from products.models import Product
 
 User = settings.AUTH_USER_MODEL
@@ -42,6 +41,7 @@ class CartManager(models.Manager):
             user_obj = user
         return self.model.objects.create(user=user_obj)
 
+
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     products = models.ManyToManyField(Product, through='CartProduct', blank=True)
@@ -60,19 +60,17 @@ class Cart(models.Model):
         Atualiza os totais do carrinho com base na quantidade dos produtos.
         """
         subtotal = sum(
-            cart_product.product.discount_price * cart_product.quantity
-            if cart_product.product.discount_price
-            else cart_product.product.price * cart_product.quantity
+            cart_product.product.get_final_price() * cart_product.quantity
             for cart_product in self.cartproduct_set.all()
         )
         self.subtotal = subtotal
-        self.total = subtotal * Decimal(1.80)  # Taxa de entrega ajustável.
+        self.total = subtotal  # Substitua se tiver taxa de entrega
         self.save()
 
 
 def pre_save_cart_receiver(sender, instance, *args, **kwargs):
     if instance.subtotal > 0:
-        instance.total = Decimal(instance.subtotal) * Decimal(1.80)  # Taxa de entrega ajustável.
+        instance.total = Decimal(instance.subtotal)  # Adicione taxa se necessário
     else:
         instance.total = 0.00
 

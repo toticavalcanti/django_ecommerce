@@ -1,11 +1,9 @@
-<form class='form-product-ajax flex-grow-1' method='POST' action='{% url "cart:update" %}' data-endpoint='{% url "cart:update" %}'>
+<!-- Path: templates/products/snippets/update-cart.html -->
+<form class="form-product-ajax" method="POST" action="{% url 'cart:update' %}">
   {% csrf_token %}
-  <input type='hidden' name='product_id' value='{{ product.id }}' />
-  <span class='submit-span w-100'>
-    {% if product in cart.products.all %}
-      <button type='submit' class='btn btn-outline-danger btn-sm w-100'>Remover</button>
-    {% else %}
-      <button type='submit' class='btn btn-success btn-sm w-100'>Adicionar</button>
-    {% endif %}
-  </span>
+  <input type="hidden" name="product_id" value="{{ product.id }}">
+  <div class="d-flex align-items-center">
+    <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control form-control-sm me-2" style="width: 70px;">
+    <button type="submit" class="btn btn-success btn-sm">Adicionar</button>
+  </div>
 </form>

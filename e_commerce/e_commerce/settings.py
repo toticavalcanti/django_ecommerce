@@ -59,8 +59,18 @@ AUTH_USER_MODEL = 'accounts.User' # changes the built-in user model to ours
 FORCE_SESSION_TO_ONE = False
 FORCE_INACTIVE_USER_ENDSESSION = False
 
+SESSION_COOKIE_NAME = 'frontend_sessionid'  # to frontend
+ADMIN_SESSION_COOKIE_NAME = 'admin_sessionid'  # to admin
+# Configuration for the frontend
+SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds (14 days)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
+# Optional configuration for admin sessions (can be configured directly in the middleware)
+ADMIN_SESSION_COOKIE_AGE = 3600  # 1 hour (3600 seconds)
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'e_commerce.session_middleware.SeparateAdminSessionMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
