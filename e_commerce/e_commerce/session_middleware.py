@@ -8,13 +8,15 @@ logger = logging.getLogger(__name__)
 
 class SeparateAdminSessionMiddleware(SessionMiddleware):
     def process_request(self, request):
+        # Define a chave de sessão com base na URL (admin ou frontend)
         if request.path.startswith('/admin/'):
-            logger.debug("Admin session initialized")
             session_key_name = settings.ADMIN_SESSION_COOKIE_NAME
+            logger.info(f"Admin session key being set: {session_key_name}")
         else:
-            logger.debug("Frontend session initialized")
             session_key_name = settings.SESSION_COOKIE_NAME
+            logger.info(f"Frontend session key being set: {session_key_name}")
 
+        # Configura a sessão
         session_key = request.COOKIES.get(session_key_name)
         request.session_cookie_name = session_key_name
         request.session = self.SessionStore(session_key)
@@ -34,7 +36,7 @@ class SeparateAdminSessionMiddleware(SessionMiddleware):
             session_key = request.session.session_key
 
             if session_key:
-                # Configurando apenas `expires` para o cookie
+                # Configura o cookie de sessão com `expires`
                 expires_time = request.session.get_expiry_date()
                 response.set_cookie(
                     session_cookie_name,

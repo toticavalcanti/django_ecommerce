@@ -55,20 +55,27 @@ INSTALLED_APPS = [
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-AUTH_USER_MODEL = 'accounts.User' # changes the built-in user model to ours
-FORCE_SESSION_TO_ONE = False
-FORCE_INACTIVE_USER_ENDSESSION = False
+# Define o modelo de usuário customizado
+AUTH_USER_MODEL = 'accounts.User'
 
-SESSION_COOKIE_NAME = 'frontend_sessionid'  # to frontend
-ADMIN_SESSION_COOKIE_NAME = 'admin_sessionid'  # to admin
-# Configuration for the frontend
-SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds (14 days)
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+# Configurações adicionais para controle de sessão
+FORCE_SESSION_TO_ONE = False  # Permite múltiplas sessões para o mesmo usuário
+FORCE_INACTIVE_USER_ENDSESSION = False  # Não encerra a sessão de usuários inativos automaticamente
 
-# Optional configuration for admin sessions (can be configured directly in the middleware)
-ADMIN_SESSION_COOKIE_AGE = 3600  # 1 hour (3600 seconds)
+# Configuração de sessão para o frontend
+SESSION_COOKIE_NAME = 'frontend_sessionid'  # Nome do cookie para sessões do frontend
+SESSION_COOKIE_AGE = 1209600  # Duração padrão de 2 semanas (14 dias)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Não expira ao fechar o navegador
+SESSION_COOKIE_PATH = '/'  # Define o escopo do cookie para toda a aplicação
 
-SESSION_COOKIE_PATH = '/'
+# Configuração de sessão para o admin
+ADMIN_SESSION_COOKIE_NAME = 'admin_sessionid'  # Nome do cookie para sessões do admin
+ADMIN_SESSION_COOKIE_AGE = 3600  # Duração de 1 hora para sessões do admin
+
+# Configurações de segurança para os cookies
+SESSION_COOKIE_SECURE = False  # Use True em produção (requer HTTPS)
+SESSION_COOKIE_HTTPONLY = True  # Impede acesso via JavaScript
+SESSION_COOKIE_SAMESITE = 'Lax'  # Melhora a segurança contra CSRF'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
