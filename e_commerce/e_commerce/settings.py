@@ -68,6 +68,8 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 # Optional configuration for admin sessions (can be configured directly in the middleware)
 ADMIN_SESSION_COOKIE_AGE = 3600  # 1 hour (3600 seconds)
 
+SESSION_COOKIE_PATH = '/'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'e_commerce.session_middleware.SeparateAdminSessionMiddleware',
