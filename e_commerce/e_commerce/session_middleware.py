@@ -34,11 +34,12 @@ class SeparateAdminSessionMiddleware(SessionMiddleware):
             session_key = request.session.session_key
 
             if session_key:
+                # Configurando apenas `expires` para o cookie
+                expires_time = request.session.get_expiry_date()
                 response.set_cookie(
                     session_cookie_name,
                     session_key,
-                    max_age=request.session.get_expiry_age(),
-                    expires=request.session.get_expiry_date(),
+                    expires=expires_time.strftime('%a, %d-%b-%Y %H:%M:%S GMT'),  # Define o formato do `expires`
                     domain=settings.SESSION_COOKIE_DOMAIN,
                     path=settings.SESSION_COOKIE_PATH,
                     secure=settings.SESSION_COOKIE_SECURE or None,
