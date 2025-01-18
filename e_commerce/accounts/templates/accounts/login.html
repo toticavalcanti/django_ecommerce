@@ -1,6 +1,36 @@
-{% extends "base.html" %} {% block content %}
-<form method='POST'>
-    {% csrf_token %} {{ form }}
-    <button type='submit' class='btn btn-default'>Enviar</button>
-</form>
+{% extends "base.html" %}
+{% load custom_tags %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="text-center mb-4">Login</h2>
+                    <form method="POST" action="{% url 'login' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="id_email">Email</label>
+                            {{ form.email|add_class:"form-control" }}
+                            <small id="emailHelp" class="form-text text-muted">
+                                Nunca compartilharemos seu e-mail com mais ninguém.
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_password">Password</label>
+                            {{ form.password|add_class:"form-control" }}
+                        </div>
+                        <div class="form-group form-check">
+                            <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me">
+                            <label class="form-check-label" for="remember_me">Lembrar senha</label>
+                        </div>
+                        <input type="hidden" name="next" value="{{ request.GET.next }}">
+                        <button type="submit" class="btn btn-primary w-100">Enviar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

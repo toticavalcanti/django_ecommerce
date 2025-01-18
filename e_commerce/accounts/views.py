@@ -27,7 +27,7 @@ def guest_register_view(request):
             return redirect("/register/")
     return redirect("/register/")
 
-class LoginView(FormView):
+class LoginView(FormView): 
     form_class = LoginForm
     success_url = '/'  # Redireciona para a raiz do projeto
     template_name = 'accounts/login.html'
@@ -35,14 +35,20 @@ class LoginView(FormView):
     def form_valid(self, form):
         email = form.cleaned_data.get("email")
         password = form.cleaned_data.get("password")
-        user = authenticate(request=self.request, username=email, password=password) 
+        user = authenticate(request=self.request, username=email, password=password)
+        
         if user is not None:
             login(self.request, user)
             user_logged_in.send(sender=user.__class__, instance=user, request=self.request)
-            try:
-                del self.request.session['guest_email_id']
-            except:
-                pass
+
+            # Remove o email de convidado da sessão, se existir
+            self.request.session.pop('guest_email_id', None)
+
+            # Verifica se há um parâmetro `next` válido na URL
+            next_url = self.request.GET.get('next')
+            if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={self.request.get_host()}):
+                return redirect(next_url)
+
         return super(LoginView, self).form_valid(form)
 
 # def login_page(request):
