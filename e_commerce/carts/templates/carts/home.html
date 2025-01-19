@@ -1,57 +1,115 @@
 {% extends "base.html" %}
+{% load static %}
 {% load custom_filters %}
 
 {% block content %}
   <h1>Carrinho</h1>
   {% if cart.cartproduct_set.exists %}
-    <table class="table cart-table">
+    <table class="table">
       <thead>
         <tr>
           <th>#</th>
           <th>Produto</th>
+          <th>Imagem</th>
           <th>Quantidade</th>
           <th>Preço Unitário</th>
           <th>Total</th>
           <th>Ações</th>
         </tr>
       </thead>
-      <tbody class="cart-body">
+      <tbody>
         {% for cart_product in cart.cartproduct_set.all %}
-          <tr class="cart-product">
-            <td>{{ forloop.counter }}</td>
-            <td>{{ cart_product.product.title }}</td>
-            <td>
-              <form method="POST" action="{% url 'cart:update' %}" class="form-product-ajax">
-                {% csrf_token %}
-                <input type="hidden" name="product_id" value="{{ cart_product.product.id }}">
-                <input 
-                  type="number" 
-                  name="quantity" 
-                  value="{{ cart_product.quantity }}" 
-                  min="1" 
-                  max="{{ cart_product.product.stock }}" 
-                  class="form-control form-control-sm"
-                  onchange="this.form.submit()" 
-                >
-              </form>
-            </td>
-            <td>R$ {{ cart_product.product.get_final_price }}</td>
-            <td>R$ {{ cart_product.quantity|multiply:cart_product.product.get_final_price }}</td>
-            <td>
-              <form method="POST" action="{% url 'cart:update' %}" class="form-product-ajax">
-                {% csrf_token %}
-                <input type="hidden" name="product_id" value="{{ cart_product.product.id }}">
-                <input type="hidden" name="quantity" value="0">
-                <button type="submit" class="btn btn-danger btn-sm">Remover</button>
-              </form>
-            </td>
-          </tr>
+        <tr class="align-middle">
+          <td>{{ forloop.counter }}</td>
+          <td>{{ cart_product.product.title }}</td>
+          <td>
+            {% if cart_product.product.images.all %}
+              <img 
+                src="{{ cart_product.product.images.first.image.url }}" 
+                alt="{{ cart_product.product.images.first.alt_text|default:cart_product.product.title }}"
+                class="img-thumbnail"
+                style="width: 100px; height: auto;"
+              >
+            {% else %}
+              <img 
+                src="{% static 'placeholder.jpg' %}" 
+                alt="Placeholder"
+                class="img-thumbnail"
+                style="width: 100px; height: auto;"
+              >
+            {% endif %}
+          </td>
+          <td>
+            <form method="POST" action="{% url 'cart:update' %}" class="form-product-ajax">
+              {% csrf_token %}
+              <input type="hidden" name="product_id" value="{{ cart_product.product.id }}">
+              <input 
+                type="number" 
+                name="quantity" 
+                value="{{ cart_product.quantity }}" 
+                min="1" 
+                max="{{ cart_product.product.stock }}" 
+                class="form-control form-control-sm text-center"
+                onchange="this.form.submit()"
+                style="width: 70px;"
+              >
+            </form>
+          </td>
+          <td>
+            {% if cart_product.product.discount_price %}
+              <div>
+                <span class="text-muted text-decoration-line-through">R$ {{ cart_product.product.price }}</span>
+              </div>
+              <div>
+                <span class="text-danger fw-bold">R$ {{ cart_product.product.discount_price }}</span>
+              </div>
+            {% else %}
+              <span class="fw-bold">R$ {{ cart_product.product.get_final_price }}</span>
+            {% endif %}
+          </td>
+          <td class="fw-bold">R$ {{ cart_product.quantity|multiply:cart_product.product.get_final_price }}</td>
+          <td>
+            <form method="POST" action="{% url 'cart:update' %}" class="form-product-ajax">
+              {% csrf_token %}
+              <input type="hidden" name="product_id" value="{{ cart_product.product.id }}">
+              <input type="hidden" name="quantity" value="0">
+              <button 
+                type="submit" 
+                class="btn btn-danger btn-sm"
+              >
+                Remover
+              </button>
+            </form>
+          </td>
+        </tr>
         {% endfor %}
       </tbody>
     </table>
-    <p><strong>Subtotal:</strong> <span class="cart-subtotal">R$ {{ cart.subtotal }}</span></p>
-    <p><strong>Total:</strong> <span class="cart-total">R$ {{ cart.total }}</span></p>
+
+    <div class="row mt-4">
+      <div class="col-12 col-md-6 offset-md-6">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span>Subtotal:</span>
+              <span class="cart-subtotal fw-bold">R$ {{ cart.subtotal }}</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+              <span>Total:</span>
+              <span class="cart-total fw-bold fs-5">R$ {{ cart.total }}</span>
+          </div>
+            <div class="d-grid">
+              <a href="{% url 'carts:checkout' %}" class="btn btn-primary">Finalizar Compra</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   {% else %}
-    <p>Seu carrinho está vazio!</p>
+    <div class="alert alert-info shadow-sm">
+      <p class="mb-3">Seu carrinho está vazio!</p>
+      <a href="{% url 'home' %}" class="btn btn-primary">Continuar Comprando</a>
+    </div>
   {% endif %}
 {% endblock content %}
