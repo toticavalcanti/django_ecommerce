@@ -58,24 +58,22 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Define o modelo de usuário customizado
 AUTH_USER_MODEL = 'accounts.User'
 
-# Configurações adicionais para controle de sessão
-FORCE_SESSION_TO_ONE = False  # Permite múltiplas sessões para o mesmo usuário
-FORCE_INACTIVE_USER_ENDSESSION = False  # Não encerra a sessão de usuários inativos automaticamente
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_NAME = 'frontend_sessionid'
+ADMIN_SESSION_COOKIE_NAME = 'admin_sessionid'
 
-# Configuração de sessão para o frontend
-SESSION_COOKIE_NAME = 'frontend_sessionid'  # Nome do cookie para sessões do frontend
-SESSION_COOKIE_AGE = 1209600  # Duração padrão de 2 semanas (14 dias)
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Não expira ao fechar o navegador
-SESSION_COOKIE_PATH = '/'  # Define o escopo do cookie para toda a aplicação
+# Configurações de duração das sessões
+SESSION_COOKIE_AGE = 1209600  # 2 semanas para frontend
+ADMIN_SESSION_COOKIE_AGE = 3600  # 1 hora para admin
 
-# Configuração de sessão para o admin
-ADMIN_SESSION_COOKIE_NAME = 'admin_sessionid'  # Nome do cookie para sessões do admin
-ADMIN_SESSION_COOKIE_AGE = 3600  # Duração de 1 hora para sessões do admin
+# Configurações de segurança
+SESSION_COOKIE_SECURE = False  # Requer HTTPS
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
 
-# Configurações de segurança para os cookies
-SESSION_COOKIE_SECURE = False  # Use True em produção (requer HTTPS)
-SESSION_COOKIE_HTTPONLY = True  # Impede acesso via JavaScript
-SESSION_COOKIE_SAMESITE = 'Lax'  # Melhora a segurança contra CSRF'
+# CSRF_COOKIE_SAMESITE = 'Lax'
+# CSRF_COOKIE_SECURE = True
+# CSRF_COOKIE_HTTPONLY = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
