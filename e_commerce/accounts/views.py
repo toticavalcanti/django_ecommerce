@@ -7,7 +7,7 @@ from .signals import user_logged_in
 from django.contrib import messages
 from .forms import LoginForm, RegisterForm, GuestForm
 from .models import GuestEmail
-
+from django.contrib import messages
 
 def guest_register_view(request):
     form = GuestForm(request.POST or None)
