@@ -1,39 +1,42 @@
-{% extends "base.html" %}
-{% load custom_tags %}
-
-{% block content %}
+{% extends "base.html" %} {% load custom_tags %} {% block content %}
 <div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-12">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h2 class="text-center mb-4">Registrar</h2>
-                    <form method="POST" action="{% url 'register' %}">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label for="id_email">Email</label>
-                            {{ form.email|add_class:"form-control" }}
-                            <small id="emailHelp" class="form-text text-muted">
-                                Nunca compartilharemos seu e-mail com mais ninguém.
-                            </small>
-                        </div>
-                        <div class="form-group">
-                            <label for="id_full_name">Nome Completo</label>
-                            {{ form.full_name|add_class:"form-control" }}
-                        </div>
-                        <div class="form-group">
-                            <label for="id_password">Senha</label>
-                            {{ form.password|add_class:"form-control" }}
-                        </div>
-                        <div class="form-group">
-                            <label for="id_password_2">Confirmar Senha</label>
-                            {{ form.password_2|add_class:"form-control" }}
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Cadastrar</button>
-                    </form>
-                </div>
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="text-center mb-4 text-primary">Registrar</h2>
+          <form method="POST" action="{% url 'register' %}">
+            {% csrf_token %}
+            <div class="form-group mb-3">
+              <label for="id_email" class="form-label fw-bold">Email</label>
+              {{ form.email|add_class:"form-control form-control-lg" }}
+              <small id="emailHelp" class="form-text text-muted">
+                Nunca compartilharemos seu e-mail com mais ninguém.
+              </small>
             </div>
+            <div class="form-group mb-3">
+              <label for="id_full_name" class="form-label fw-bold"
+                >Nome Completo</label
+              >
+              {{ form.full_name|add_class:"form-control form-control-lg" }}
+            </div>
+            <div class="form-group mb-3">
+              <label for="id_password" class="form-label fw-bold">Senha</label>
+              {{ form.password|add_class:"form-control form-control-lg" }}
+            </div>
+            <div class="form-group mb-3">
+              <label for="id_password_2" class="form-label fw-bold"
+                >Confirmar Senha</label
+              >
+              {{ form.password_2|add_class:"form-control form-control-lg" }}
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg w-100">
+              Cadastrar
+            </button>
+          </form>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}

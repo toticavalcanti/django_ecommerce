@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth import authenticate, login, logout
 from django.views.generic import CreateView, FormView, View 
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
