@@ -15,11 +15,6 @@ from .models import Cart, CartProduct
 def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
-from products.models import Product
-from .models import Cart, CartProduct
-
 def add_to_cart(request):
     if request.method == "POST":
         # Pegando os dados do POST
