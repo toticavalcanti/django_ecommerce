@@ -1,30 +1,42 @@
 from django.db import models
-
 from billing.models import BillingProfile
 
 ADDRESS_TYPES = (
     ('billing', 'Billing'),
     ('shipping', 'Shipping'),
 )
+
 class Address(models.Model):
-    billing_profile = models.ForeignKey(BillingProfile, on_delete=models.CASCADE, null = True, blank = True)
-    address_type    = models.CharField(max_length = 120, choices = ADDRESS_TYPES)
-    address_line_1  = models.CharField(max_length = 120)
-    address_line_2  = models.CharField(max_length = 120, null = True, blank = True)
-    city            = models.CharField(max_length = 120)
-    country         = models.CharField(max_length = 120, default = 'Brazil')
-    state           = models.CharField(max_length = 120)
-    postal_code     = models.CharField(max_length = 120)
+    billing_profile = models.ForeignKey(
+        BillingProfile, 
+        on_delete=models.CASCADE,
+        null=True,  # Permite nulo temporariamente
+        blank=True  # Permite formulários vazios temporariamente
+    )
+    address_type = models.CharField(
+        max_length=120, 
+        choices=ADDRESS_TYPES, 
+        default="shipping"
+    )
+    street = models.CharField(max_length=255, null=False, blank=False, default="")
+    complement = models.CharField(max_length=255, null=True, blank=True, default="")
+    neighborhood = models.CharField(max_length=255, null=True, blank=True, default="")
+    number = models.CharField(max_length=10, null=True, blank=True, default="")
+    city = models.CharField(max_length=100, null=False, blank=False, default="")
+    state = models.CharField(max_length=100, null=False, blank=False, default="")
+    country = models.CharField(max_length=100, null=False, blank=False, default="")
+    postal_code = models.CharField(max_length=20, null=False, blank=False, default="")
 
     def __str__(self):
-        return str(self.billing_profile)
+        return f"{self.street}, {self.number} - {self.city}, {self.state} ({self.postal_code})"
 
     def get_address(self):
-        return "{line1}\n{line2}\n{city}\n{state}, {postal}\n{country}".format(
-                line1 = self.address_line_1,
-                line2 = self.address_line_2 or "",
-                city = self.city,
-                state = self.state,
-                postal= self.postal_code,
-                country = self.country
-            )
+        address_parts = [
+            f"{self.street}, {self.number}",
+            self.complement if self.complement else "",
+            self.neighborhood if self.neighborhood else "",
+            f"{self.city}, {self.state}",
+            self.postal_code,
+            self.country
+        ]
+        return "\n".join(filter(None, address_parts))

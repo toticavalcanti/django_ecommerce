@@ -5,22 +5,40 @@ class AddressForm(forms.ModelForm):
     class Meta:
         model = Address
         fields = [
-            'address_line_1',
-            'address_line_2',
+            'street', 
+            'number', 
+            'complement', 
+            'neighborhood', 
             'city',
-            'country',
-            'state',
-            'postal_code',
+            'state', 
+            'country', 
+            'postal_code'
         ]
+        widgets = {
+            'street': forms.TextInput(attrs={'class': 'form-control'}),
+            'number': forms.TextInput(attrs={'class': 'form-control'}),
+            'complement': forms.TextInput(attrs={'class': 'form-control'}),
+            'neighborhood': forms.TextInput(attrs={'class': 'form-control'}),
+            'city': forms.TextInput(attrs={'class': 'form-control'}),
+            'state': forms.TextInput(attrs={'class': 'form-control'}),
+            'country': forms.TextInput(attrs={'class': 'form-control'}),
+            'postal_code': forms.TextInput(attrs={'class': 'form-control'})
+        }
 
-    def clean_address_line_1(self):
-        address_line_1 = self.cleaned_data.get('address_line_1')
-        if not address_line_1:
-            raise forms.ValidationError("Address Line 1 is required.")
-        return address_line_1
+    def clean_street(self):
+        street = self.cleaned_data.get('street')
+        if not street:
+            raise forms.ValidationError("Rua é obrigatória.")
+        return street
 
     def clean_city(self):
         city = self.cleaned_data.get('city')
         if not city:
-            raise forms.ValidationError("City is required.")
+            raise forms.ValidationError("Cidade é obrigatória.")
         return city
+
+    def clean_postal_code(self):
+        postal_code = self.cleaned_data.get('postal_code')
+        if not postal_code:
+            raise forms.ValidationError("CEP é obrigatório.")
+        return postal_code

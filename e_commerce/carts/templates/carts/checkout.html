@@ -1,53 +1,211 @@
 {% extends "base.html" %}
+{% load custom_filters %}
 {% block content %}
-<div class="container mt-4">
+<div class="container mt-5">
   {% if not billing_profile %}
-    <div class="row justify-content-between">
-      <!-- Card de Login -->
-      <div class="col-md-5">
-        <div class="card border-0 shadow-sm">
-          <div class="card-body p-4">
-            <h3 class="card-title mb-4">Login</h3>
-            <form method="POST">
-              {% csrf_token %}
-              <div class="mb-3">
-                <label for="email" class="form-label">Email:</label>
-                <input type="email" class="form-control" name="email" value="{{ form.email.value|default:'' }}" required>
-              </div>
-              <div class="mb-3">
-                <label for="password" class="form-label">Senha:</label>
-                <input type="password" class="form-control" name="password" required>
-              </div>
-              <button type="submit" class="btn btn-primary w-100">Entrar</button>
-            </form>
-          </div>
-        </div>
+    <div class="row text-center">
+      <div class="col-12 col-md-6">
+        <p class="lead">Login</p>
+        {% include 'accounts/snippets/form.html' with form=login_form next_url=request.build_absolute_uri %}
       </div>
-
-      <!-- Card de Convidado -->
-      <div class="col-md-5">
-        <div class="card border-0 shadow-sm">
-          <div class="card-body p-4">
-            <h3 class="card-title mb-4">Continuar como Convidado</h3>
-            <form method="POST" action="{% url 'guest_register' %}">
-              {% csrf_token %}
-              <div class="mb-3">
-                <label for="guest_email" class="form-label">Email:</label>
-                <input type="email" class="form-control" name="guest_email" required>
-              </div>
-              <button type="submit" class="btn btn-primary w-100">Continuar como Convidado</button>
-            </form>
-          </div>
-        </div>
+      <div class="col-12 col-md-6">
+        <p class="lead">Continuar como Convidado</p>
+        {% url "guest_register" as guest_register_url %}
+        {% include 'accounts/snippets/form.html' with form=guest_form next_url=request.build_absolute_uri action_url=guest_register_url %}
       </div>
     </div>
-
-    <div class="text-center mt-4">
-      <a href="{% url 'cart:home' %}" class="btn btn-primary px-4">Voltar ao Carrinho</a>
-    </div>
-
   {% else %}
-    <!-- Resto do template permanece igual -->
+    {% if not object.shipping_address %}
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <h3 class="mb-4 text-center">Endereço de Envio</h3>
+          <div class="card shadow-sm border-0">
+            <div class="card-body">
+              <form method="POST" action="{% url 'checkout_address_create' %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.build_absolute_uri }}">
+                <input type="hidden" name="address_type" value="shipping">
+                
+                <div class="row mb-3">
+                  <label for="street" class="col-sm-3 col-form-label text-end">Rua:</label>
+                  <div class="col-sm-9">
+                    {{ address_form.street|add_class:"form-control" }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="number" class="col-sm-3 col-form-label text-end">Número:</label>
+                  <div class="col-sm-9">
+                    {{ address_form.number|add_class:"form-control" }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="complement" class="col-sm-3 col-form-label text-end">Complemento:</label>
+                  <div class="col-sm-9">
+                    {{ address_form.complement|add_class:"form-control" }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="neighborhood" class="col-sm-3 col-form-label text-end">Bairro:</label>
+                  <div class="col-sm-9">
+                    {{ address_form.neighborhood|add_class:"form-control" }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="city" class="col-sm-3 col-form-label text-end">Cidade:</label>
+                  <div class="col-sm-9">
+                    {{ address_form.city|add_class:"form-control" }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="state" class="col-sm-3 col-form-label text-end">Estado:</label>
+                  <div class="col-sm-9">
+                    {{ address_form.state|add_class:"form-control" }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="country" class="col-sm-3 col-form-label text-end">País:</label>
+                  <div class="col-sm-9">
+                    {{ address_form.country|add_class:"form-control" }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="postal_code" class="col-sm-3 col-form-label text-end">CEP:</label>
+                  <div class="col-sm-9">
+                    {{ address_form.postal_code|add_class:"form-control" }}
+                  </div>
+                </div>
+
+                <div class="d-grid gap-2 mt-4">
+                  <button type="submit" class="btn btn-primary">Salvar Endereço</button>
+                  <a href="{% url 'cart:home' %}" class="btn btn-outline-primary">Voltar ao Carrinho</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    {% elif not object.billing_address %}
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <h3 class="mb-4 text-center">Endereço de Cobrança</h3>
+          <div class="card shadow-sm border-0">
+            <div class="card-body">
+              <form method="POST" action="{% url 'checkout_address_create' %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.build_absolute_uri }}">
+                <input type="hidden" name="address_type" value="billing">
+                
+                <!-- Mesmos campos do endereço de envio -->
+                <div class="row mb-3">
+                  <label for="street" class="col-sm-3 col-form-label text-end">Rua:</label>
+                  <div class="col-sm-9">
+                    {{ address_form.street|add_class:"form-control" }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="number" class="col-sm-3 col-form-label text-end">Número:</label>
+                  <div class="col-sm-9">
+                    {{ address_form.number|add_class:"form-control" }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="complement" class="col-sm-3 col-form-label text-end">Complemento:</label>
+                  <div class="col-sm-9">
+                    {{ address_form.complement|add_class:"form-control" }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="neighborhood" class="col-sm-3 col-form-label text-end">Bairro:</label>
+                  <div class="col-sm-9">
+                    {{ address_form.neighborhood|add_class:"form-control" }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="city" class="col-sm-3 col-form-label text-end">Cidade:</label>
+                  <div class="col-sm-9">
+                    {{ address_form.city|add_class:"form-control" }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="state" class="col-sm-3 col-form-label text-end">Estado:</label>
+                  <div class="col-sm-9">
+                    {{ address_form.state|add_class:"form-control" }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="country" class="col-sm-3 col-form-label text-end">País:</label>
+                  <div class="col-sm-9">
+                    {{ address_form.country|add_class:"form-control" }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="postal_code" class="col-sm-3 col-form-label text-end">CEP:</label>
+                  <div class="col-sm-9">
+                    {{ address_form.postal_code|add_class:"form-control" }}
+                  </div>
+                </div>
+
+                <div class="d-grid gap-2 mt-4">
+                  <button type="submit" class="btn btn-primary">Salvar Endereço</button>
+                  <a href="{% url 'cart:home' %}" class="btn btn-outline-primary">Voltar ao Carrinho</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    {% else %}
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <h3 class="text-center mb-4">Resumo do Pedido</h3>
+          <div class="card shadow-sm border-0">
+            <div class="card-body">
+              <div class="mb-4">
+                <h6 class="text-muted mb-3">Itens do Carrinho:</h6>
+                <p>{{ object.cart.products.all|join:", " }}</p>
+              </div>
+
+              <div class="mb-4">
+                <h6 class="text-muted mb-3">Endereços:</h6>
+                <p><strong>Envio:</strong> {{ object.shipping_address.get_address }}</p>
+                <p><strong>Cobrança:</strong> {{ object.billing_address.get_address }}</p>
+              </div>
+
+              <div class="mb-4">
+                <h6 class="text-muted mb-3">Valores:</h6>
+                <p><strong>Subtotal:</strong> R$ {{ object.cart.total }}</p>
+                <p><strong>Frete:</strong> R$ {{ object.shipping_total }}</p>
+                <p class="h5"><strong>Total:</strong> R$ {{ object.total }}</p>
+              </div>
+
+              <div class="d-grid gap-2">
+                <form method="POST" class="mt-4">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-primary w-100">Finalizar Pedido</button>
+                </form>
+                <a href="{% url 'cart:home' %}" class="btn btn-outline-primary">Voltar ao Carrinho</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
   {% endif %}
 </div>
 {% endblock %}

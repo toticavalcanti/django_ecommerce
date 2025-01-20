@@ -44,6 +44,9 @@ FORCE_INACTIVE_USER_ENDSESSION = False
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_NAME = 'sessionid'
 SESSION_COOKIE_AGE = 1209600
+SESSION_COOKIE_SAMESITE = 'Lax'  # Permite que cookies sejam enviados entre abas
+SESSION_COOKIE_SECURE = False   # Use True se estiver usando HTTPS
+CSRF_COOKIE_SECURE = False 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -55,7 +58,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-LOGOUT_REDIRECT_URL = '/login/'
+LOGOUT_REDIRECT_URL = None
 ROOT_URLCONF = 'e_commerce.urls'
 
 TEMPLATES = [

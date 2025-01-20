@@ -46,14 +46,16 @@ class LoginView(FormView):
         return super(LoginView, self).form_valid(form)
 
 class LogoutView(View):
-    template_name = 'accounts/logout.html'
-    
+    """
+    View de logout com redirecionamento customizado.
+    """
     def get(self, request, *args, **kwargs):
-        context = {
-            "content": "Você efetuou o logout com sucesso! :)"
-        }
-        logout(request)
-        return render(request, self.template_name, context)
+        logout(request)  # Efetua logout do usuário
+
+        # Redireciona com base no tipo de usuário
+        if request.user.is_staff:  # Usuário admin
+            return redirect('/admin/')
+        return redirect('/login/')  # Usuário comum
 
 class RegisterView(CreateView):
     form_class = RegisterForm
