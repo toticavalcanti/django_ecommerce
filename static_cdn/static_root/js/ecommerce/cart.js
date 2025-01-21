@@ -3,12 +3,14 @@ $(document).ready(function () {
   const productForm = $(".form-product-ajax");
 
   productForm.submit(function (event) {
-    event.preventDefault();
-    const thisForm = $(this);
-    const actionEndpoint = thisForm.attr("action");
-    const httpMethod = thisForm.attr("method");
-    const formData = thisForm.serialize();
+    event.preventDefault(); // Previne o envio padrão do formulário
+    console.log("Formulário interceptado: ", thisForm);
+    const thisForm = $(this); // Formulário atual
+    const actionEndpoint = thisForm.attr("action"); // URL do formulário
+    const httpMethod = thisForm.attr("method"); // Método HTTP
+    const formData = thisForm.serialize(); // Dados do formulário
 
+    // Requisição Ajax para adicionar/remover itens
     $.ajax({
       url: actionEndpoint,
       method: httpMethod,
@@ -19,25 +21,32 @@ $(document).ready(function () {
           const navbarCount = $(".navbar-cart-count");
           navbarCount.text(data.cartItemCount);
 
-          // Atualiza o subtotal e total na página
+          // Atualiza os valores de subtotal e total na página
           $(".cart-subtotal").text(`R$ ${data.subtotal}`);
           $(".cart-total").text(`R$ ${data.total}`);
 
           // Se estamos na página do carrinho
           if (window.location.href.indexOf("cart") !== -1) {
-            // Se a quantidade for 0, remove a linha
+            // Se a quantidade for 0, remove a linha correspondente
             if (thisForm.find('input[name="quantity"]').val() === "0") {
               thisForm.closest("tr").fadeOut(300, function () {
                 $(this).remove();
                 checkCartEmpty(); // Verifica se o carrinho está vazio
               });
             } else {
-              refreshCart();
+              refreshCart(); // Atualiza os dados do carrinho
             }
+          } else {
+            // Exibe uma mensagem de sucesso (opcional)
+            alert("Produto atualizado no carrinho com sucesso!");
           }
+        } else {
+          // Exibe mensagem de erro se algo der errado
+          alert("Erro ao atualizar o carrinho. Tente novamente.");
         }
       },
-      error: function () {
+      error: function (xhr, status, error) {
+        console.error("Erro ao processar a requisição:", error);
         alert("Erro ao processar a solicitação. Tente novamente.");
       },
     });
@@ -47,40 +56,42 @@ $(document).ready(function () {
   function refreshCart() {
     const cartTable = $(".cart-table");
     const cartBody = cartTable.find("tbody");
-    const refreshCartUrl = "/cart/get-items/";
+    const refreshCartUrl = "/cart/get-items/"; // Endpoint para obter itens do carrinho
 
     $.ajax({
       url: refreshCartUrl,
       method: "GET",
       success: function (data) {
         if (data.items.length > 0) {
-          cartBody.html("");
+          cartBody.html(""); // Limpa a tabela do carrinho
           let i = data.items.length;
 
+          // Itera pelos itens do carrinho e os insere na tabela
           $.each(data.items, function (index, value) {
             cartBody.append(`
-                            <tr class="cart-product">
-                                <th scope="row">${i}</th>
-                                <td><a href="${value.url}">${value.name}</a></td>
-                                <td>${value.quantity}</td>
-                                <td>${value.price}</td>
-                                <td>${value.total}</td>
-                                <td>
-                                    <form method="POST" action="/cart/update/" class="form-product-ajax">
-                                        <input type="hidden" name="product_id" value="${value.id}">
-                                        <input type="number" name="quantity" value="0" class="d-none">
-                                        <button type="submit" class="btn btn-danger btn-sm">Remover</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        `);
+              <tr class="cart-product">
+                <th scope="row">${i}</th>
+                <td><a href="${value.url}">${value.name}</a></td>
+                <td>${value.quantity}</td>
+                <td>${value.price}</td>
+                <td>${value.total}</td>
+                <td>
+                  <form method="POST" action="/cart/update/" class="form-product-ajax">
+                    <input type="hidden" name="product_id" value="${value.id}">
+                    <input type="number" name="quantity" value="0" class="d-none">
+                    <button type="submit" class="btn btn-danger btn-sm">Remover</button>
+                  </form>
+                </td>
+              </tr>
+            `);
             i--;
           });
 
+          // Atualiza os valores de subtotal e total na página
           $(".cart-subtotal").text(`R$ ${data.subtotal}`);
           $(".cart-total").text(`R$ ${data.total}`);
         } else {
-          // Recarrega a página para mostrar o carrinho vazio
+          // Recarrega a página para exibir o estado vazio do carrinho
           window.location.href = window.location.href;
         }
       },
@@ -93,7 +104,8 @@ $(document).ready(function () {
   // Verifica se o carrinho está vazio e atualiza a interface
   function checkCartEmpty() {
     if ($(".cart-product").length === 0) {
-      window.location.href = window.location.href; // Recarrega a página para mostrar o estado vazio
+      // Recarrega a página se o carrinho estiver vazio
+      window.location.href = window.location.href;
     }
   }
 });
