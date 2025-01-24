@@ -7,11 +7,11 @@
     <input type='hidden' name='address_type' value='{{ address_type }}' />
     {% endif %}
     {% for address in address_qs %}
-      <label for='address-{{ address.id }}'>
-        <input id='address-{{ address.id }}' type='radio' name='shipping_address' value='{{ address.id }}' />
-      {{ address.address_line_1 }}
-      </label><br/>
+      <label for='address-{{ address.id }}' class="d-block mb-2">
+        <input id='address-{{ address.id }}' type='radio' name='shipping_address' value='{{ address.id }}' class="me-2" />
+        {{ address.street }}, {{ address.number }} - {{ address.city }}, {{ address.state }}
+      </label>
     {% endfor %}
-  <button type='submit' class='btn btn-success'>Use Address</button>
+  <button type='submit' class='btn btn-primary w-100'>Usar Endereço</button>
   </form>
 {% endif %}

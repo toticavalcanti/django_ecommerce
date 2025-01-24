@@ -14,6 +14,16 @@ class AddressForm(forms.ModelForm):
             'country', 
             'postal_code'
         ]
+        labels = {
+            'street': 'Rua',
+            'number': 'Número',
+            'complement': 'Complemento',
+            'neighborhood': 'Bairro',
+            'city': 'Cidade',
+            'state': 'Estado',
+            'country': 'País',
+            'postal_code': 'CEP'
+        }
         widgets = {
             'street': forms.TextInput(attrs={'class': 'form-control'}),
             'number': forms.TextInput(attrs={'class': 'form-control'}),

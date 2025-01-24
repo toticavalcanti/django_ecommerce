@@ -57,8 +57,8 @@ class GuestForm(forms.Form):
     email = forms.EmailField()
     
 class LoginForm(forms.Form):
-    email = forms.EmailField(label='Email')
-    password = forms.CharField(widget=forms.PasswordInput)
+    email = forms.EmailField(label="Email", max_length=255, widget=forms.EmailInput(attrs={"class": "form-control"}))
+    password = forms.CharField(label="Senha", max_length=255, widget=forms.PasswordInput(attrs={"class": "form-control"}))
 
 class RegisterForm(forms.ModelForm):
     """

@@ -25,21 +25,15 @@ class CartManager(models.Manager):
         qs = self.get_queryset().filter(id=cart_id)
         if qs.count() == 1:
             new_obj = False
-            cart_obj = qs.first()
-            if request.user.is_authenticated and cart_obj.user is None:
-                cart_obj.user = request.user
-                cart_obj.save()
+            return qs.first(), new_obj
         else:
-            cart_obj = self.new(user=request.user)
+            cart_obj = self.new()
+            request.session["cart_id"] = cart_obj.id
             new_obj = True
-            request.session['cart_id'] = cart_obj.id
-        return cart_obj, new_obj
+            return cart_obj, new_obj
 
-    def new(self, user=None):
-        user_obj = None
-        if user is not None and user.is_authenticated:
-            user_obj = user
-        return self.model.objects.create(user=user_obj)
+    def new(self):
+        return self.model.objects.create()
 
 
 class Cart(models.Model):

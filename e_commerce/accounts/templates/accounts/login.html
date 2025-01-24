@@ -1,11 +1,38 @@
-{% extends "base.html" %} {% load custom_tags %} {% block content %}
+{% extends "base.html" %}
+{% load custom_tags %}
+{% block content %}
 <div class="container mt-5">
+  <!-- Toast para mensagens -->
+  {% if messages %}
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    {% for message in messages %}
+    <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+      {% if 'success' in message.tags %}
+      <div class="toast-header bg-success text-white">
+      {% elif 'error' in message.tags %}
+      <div class="toast-header bg-danger text-white">
+      {% elif 'warning' in message.tags %}
+      <div class="toast-header bg-warning text-dark">
+      {% else %}
+      <div class="toast-header bg-info text-white">
+      {% endif %}
+        <strong class="me-auto">Mensagem</strong>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+        {{ message }}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
   <div class="row justify-content-center">
     <div class="col-md-6 col-12">
       <div class="card shadow-sm">
         <div class="card-body">
           <h2 class="text-center mb-4 text-primary">Login</h2>
-          <form method="POST" action="{% url 'login' %}">
+          <form method="POST" action="{% url 'accounts:login' %}">
             {% csrf_token %}
             <div class="form-group mb-3">
               <label for="id_email" class="form-label fw-bold">Email</label>
@@ -19,20 +46,11 @@
               {{ form.password|add_class:"form-control form-control-lg" }}
             </div>
             <div class="form-group form-check mb-3">
-              <input
-                type="checkbox"
-                class="form-check-input"
-                id="remember_me"
-                name="remember_me"
-              />
-              <label class="form-check-label" for="remember_me"
-                >Lembrar senha</label
-              >
+              <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me" />
+              <label class="form-check-label" for="remember_me">Lembrar senha</label>
             </div>
             <input type="hidden" name="next" value="{{ request.GET.next }}" />
-            <button type="submit" class="btn btn-primary btn-lg w-100">
-              Enviar
-            </button>
+            <button type="submit" class="btn btn-primary btn-lg w-100">Enviar</button>
           </form>
         </div>
       </div>

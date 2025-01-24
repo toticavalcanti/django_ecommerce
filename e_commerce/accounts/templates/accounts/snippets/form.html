@@ -1,9 +1,25 @@
-<form method='POST' 
-    action='{% if action_url %}{{ action_url }}{% else %}{% url "login" %}{% endif %}'> 
-    {% csrf_token %}
-    {% if next_url %}
-    <input type='hidden' name='next' value='{{ next_url }}' />
+{% load static %}
+{% load custom_tags %}
+<form method="POST" 
+      action="{% if action_url %}{{ action_url }}{% else %}{% url 'accounts:login' %}{% endif %}">
+  {% csrf_token %}
+  {% if next_url %}
+  <input type="hidden" name="next" value="{{ next_url }}" />
+  {% endif %}
+  
+  <!-- Itera pelos campos do formulário -->
+  {% for field in form %}
+  <div class="form-group mb-3">
+    <label for="{{ field.id_for_label }}" class="form-label fw-bold">{{ field.label }}</label>
+    {{ field|add_class:"form-control form-control-lg" }}
+    {% if field.help_text %}
+    <small class="form-text text-muted">{{ field.help_text }}</small>
     {% endif %}
-    {{ form }}
-    <button type='submit' class='btn btn-default'>Submit</button>
-  </form>
+    {% if field.errors %}
+    <div class="text-danger small">{{ field.errors }}</div>
+    {% endif %}
+  </div>
+  {% endfor %}
+  
+  <button type="submit" class="btn btn-primary btn-lg w-100">Enviar</button>
+</form>

@@ -1,55 +1,85 @@
-from decimal import Decimal
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
+from billing.models import BillingProfile
+from orders.models import Order
 from products.models import Product
 from carts.models import Cart
 from django.conf import settings
 import stripe
-import json
+from django.contrib import messages
 
 stripe.api_key = settings.STRIPE_API_KEY
 
-# View para renderizar a página de sucesso do pagamento
 def payment_success_view(request):
+    cart_id = request.session.get("cart_id")
+    if cart_id:
+        cart_obj = Cart.objects.get(id=cart_id)
+        order_obj = Order.objects.filter(cart=cart_obj).first()
+        if order_obj:
+            order_obj.mark_paid()
+            request.session['cart_items'] = 0
+            del request.session['cart_id']
     return render(request, 'billing/payment-success.html')
 
-# View para renderizar a página de falha do pagamento
 def payment_failed_view(request):
     return render(request, 'billing/payment-failed.html')
 
-def payment_method_view(request):
-    # Adicione um log para verificar se a chave está sendo passada
-    # print(f"Publish Key na view: {settings.STRIPE_PUB_KEY}")
-    context = {'publish_key': settings.STRIPE_PUB_KEY}
-    return render(request, 'billing/payment-method.html', context)
+from django.shortcuts import redirect, render
+from django.contrib import messages
+from carts.models import Cart
+from billing.models import BillingProfile
+from orders.models import Order
+from django.conf import settings
 
+def payment_method_view(request):
+    try:
+        cart_id = request.session.get("cart_id")
+        if not cart_id:
+            print(f"Cart ID não encontrado na sessão: {cart_id}")
+            return redirect("cart:home")
+
+        cart_obj = Cart.objects.filter(id=cart_id).first()
+        if not cart_obj:
+            print(f"Cart não encontrado no banco: {cart_id}")
+            return redirect("cart:home")
+
+        order_obj = Order.objects.filter(cart=cart_obj).first()
+        if not order_obj:
+            print("Order não encontrado")
+            return redirect("cart:home")
+
+        context = {
+            "publish_key": settings.STRIPE_PUB_KEY,
+            "order": order_obj,
+        }
+        return render(request, "billing/payment-method.html", context)
+
+    except Exception as e:
+        print(f"Erro: {str(e)}")
+        return redirect("cart:home")
 @csrf_exempt
 @require_POST
-def create_payment_intent(request):
-    data = json.loads(request.body)
+def create_checkout_session(request):
     try:
-        # Calcular o valor com base nos itens enviados
-        # Substitua esta função pela sua lógica de cálculo de preços
-        amount = calculate_order_amount(data['items'])
+        cart_id = request.session.get("cart_id")
+        print(f"Cart ID: {cart_id}")
+        
+        cart_obj = Cart.objects.get(id=cart_id)
+        print(f"Cart Total: {cart_obj.total}")
 
         intent = stripe.PaymentIntent.create(
-            amount=amount,
-            currency='usd',
+            amount=int(cart_obj.total * 100),
+            currency='brl',
             payment_method_types=['card'],
         )
-        return JsonResponse({'clientSecret': intent.client_secret})
+        print(f"Payment Intent: {intent.id}")
+        
+        return JsonResponse({
+            'clientSecret': intent.client_secret
+        })
     except Exception as e:
+        print(f"Error: {str(e)}")
         return JsonResponse({'error': str(e)}, status=400)
-
-def calculate_order_amount(items):
-    cart = Cart.objects.first()  # Ou use um método que pegue o carrinho correto
-    total_amount = 0
-    for item in items:
-        product = Product.objects.get(id=item['id'])
-        total_amount += product.price * item['quantity']
-    
-    # Reutilizar a taxa definida no modelo Cart
-    return int(total_amount * Decimal(cart.total / cart.subtotal) * 100)

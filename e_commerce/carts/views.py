@@ -17,11 +17,10 @@ def is_ajax(request):
 
 def add_to_cart(request):
     if request.method == "POST":
-        # Pegando os dados do POST
         product_id = request.POST.get("product_id")
         quantity = request.POST.get("quantity", 1)
 
-        # Validando os dados
+        # Validando a quantidade
         try:
             quantity = int(quantity)
         except ValueError:
@@ -31,27 +30,23 @@ def add_to_cart(request):
         product = get_object_or_404(Product, id=product_id)
 
         # Obtendo ou criando o carrinho
-        cart_obj, _ = Cart.objects.new_or_get(request)
+        cart_obj, created = Cart.objects.new_or_get(request)
 
         # Adicionando ou atualizando o produto no carrinho
         cart_product, created = CartProduct.objects.get_or_create(cart=cart_obj, product=product)
-        if not created:
-            cart_product.quantity += quantity
-        else:
-            cart_product.quantity = quantity
+        cart_product.quantity = cart_product.quantity + quantity if not created else quantity
         cart_product.save()
 
         # Atualizando o total do carrinho
         cart_obj.update_totals()
 
-        # Calculando o total de itens no carrinho
-        total_items = sum(item.quantity for item in cart_obj.cartproduct_set.all())
-        request.session['cart_items'] = total_items  # Atualizando a sessão
+        # Atualizando a sessão
+        request.session["cart_id"] = cart_obj.id
+        request.session["cart_items"] = cart_obj.cartproduct_set.count()
 
-        return JsonResponse({"success": True, "total_items": total_items})
-
-    # Resposta para requisições que não são POST
+        return JsonResponse({"success": True, "cart_items": cart_obj.cartproduct_set.count()})
     return JsonResponse({"success": False, "message": "Método não permitido."})
+
 
 def cart_home(request):
     cart_obj, new_obj = Cart.objects.new_or_get(request)
@@ -101,14 +96,11 @@ def cart_update(request):
     })
 
 def checkout_home(request):
-    #aqui a gente pega o carrinho
     cart_obj, cart_created = Cart.objects.new_or_get(request)
     order_obj = None
-    #se o carrinho acabou de ser criado, ele tá zerado
-    #ou se o carrinho já existir mas não tiver nada dentro
     if cart_created or cart_obj.products.count() == 0:
-        return redirect("cart:home")  
-    
+        return redirect("cart:home")
+
     login_form = LoginForm()
     guest_form = GuestForm()
     address_form = AddressForm()
@@ -116,27 +108,12 @@ def checkout_home(request):
     shipping_address_id = request.session.get("shipping_address_id", None)
     billing_profile, billing_profile_created = BillingProfile.objects.new_or_get(request)
     address_qs = None
+    
     if billing_profile is not None:
+        order_obj, order_obj_created = Order.objects.new_or_get(billing_profile, cart_obj)
         if request.user.is_authenticated:
             address_qs = Address.objects.filter(billing_profile=billing_profile)
-        order_obj, order_obj_created = Order.objects.new_or_get(billing_profile, cart_obj)
-        if shipping_address_id:
-            order_obj.shipping_address = Address.objects.get(id = shipping_address_id)
-            del request.session["shipping_address_id"]
-        if billing_address_id:
-            order_obj.billing_address = Address.objects.get(id = billing_address_id) 
-            del request.session["billing_address_id"]
-        if billing_address_id or shipping_address_id:
-            order_obj.save()
-    if request.method == "POST":
-        #verifica se o pedido foi feito
-        is_done = order_obj.check_done()
-        if is_done:
-            order_obj.mark_paid()
-            request.session['cart_items'] = 0
-            del request.session['cart_id']
-            return redirect("cart:success")
-    
+
     context = {
         "object": order_obj,
         "billing_profile": billing_profile,

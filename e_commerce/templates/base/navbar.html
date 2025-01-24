@@ -1,49 +1,60 @@
 {% load static %}
-{% url 'home' as home_url %}
-{% url 'contact' as contact_url %}
-{% url 'products:list' as products_list_url %}
-{% url 'login' as login_url %}
-{% url 'logout' as logout_url %}
-{% url 'register' as register_url %}
-{% url 'cart:home' as cart_url %}
+{% load custom_filters %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
   <div class="container">
-    <a class="navbar-brand" href="{{ home_url }}">
-      <!-- Uso da logo com a tag 'static' -->
+    <!-- Logo -->
+    <a class="navbar-brand" href="{% url 'home' %}">
       <img src="{% static 'img/logo.png' %}" width="30" height="30" class="d-inline-block align-top" alt="Logo">
-      {% if nome_da_marca %} 
-      {{ nome_da_marca }} 
-      {% else %} C&oacute;digo Fluente eCommerce 
+      {% if nome_da_marca %}
+        {{ nome_da_marca }}
+      {% else %}
+        Código Fluente eCommerce
       {% endif %}
     </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+
+    <!-- Botão para dispositivos móveis -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
+    <!-- Links do Navbar -->
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item {% if request.path == home_url %} active {% endif %}">
-          <a class="nav-link" href="{{ home_url }}">Home <span class="sr-only">(current)</span></a>
+      <ul class="navbar-nav me-auto">
+        <!-- Home -->
+        <li class="nav-item {% if request.path == '/' %}active{% endif %}">
+          <a class="nav-link" href="{% url 'home' %}">Home</a>
         </li>
-        <li class="nav-item {% if request.path == contact_url %} active {% endif %}">
-          <a class="nav-link" href="{{ contact_url }}">Contato</a>
+
+        <!-- Contato -->
+        <li class="nav-item {% if request.path == '/contact/' %}active{% endif %}">
+          <a class="nav-link" href="{% url 'contact' %}">Contato</a>
         </li>
-        <li class="nav-item {% if request.path == products_list_url %} active {% endif %}">
-          <a class="nav-link" href="{{ products_list_url }}">Produtos</a>
+
+        <!-- Produtos -->
+        <li class="nav-item {% if request.path|startswith:'/products/' %}active{% endif %}">
+          <a class="nav-link" href="{% url 'products:list' %}">Produtos</a>
         </li>
-        {% if request.user.is_authenticated %}
-        <li class="nav-item {% if request.path == login_url %} active {% endif %}"> 
-          <a class="nav-link" href="{{ logout_url }}">Logout</a> 
-        </li>
+        <!-- Autenticação -->
+        {% if user.is_authenticated %}
+          <!-- Logout -->
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'accounts:logout' %}?next={{ request.path }}">Logout</a>
+          </li>
         {% else %}
-        <li class="nav-item {% if request.path == login_url %} active {% endif %}">
-          <a class="nav-link" href="{{ login_url }}?next={{request.path}}">Login</a>
-        </li>
-        <li class="nav-item {% if request.path == register %} active {% endif %}"> 
-          <a class="nav-link" href="{{ register_url }}">Registrar-se</a> 
-        </li>
+          <!-- Login -->
+          <li class="nav-item {% if request.path == '/accounts/login/' %}active{% endif %}">
+            <a class="nav-link" href="{% url 'accounts:login' %}?next={{ request.path }}">Login</a>
+          </li>
+
+          <!-- Registrar -->
+          <li class="nav-item {% if request.path == '/accounts/register/' %}active{% endif %}">
+            <a class="nav-link" href="{% url 'accounts:register' %}">Registrar-se</a>
+          </li>
         {% endif %}
-        <li class="nav-item {% if request.path == cart_url %} active {% endif %}">
-          <a class="nav-link" href="{{ cart_url }}">
+
+        <!-- Carrinho -->
+        <li class="nav-item {% if request.path == '/cart/' %}active{% endif %}">
+          <a class="nav-link" href="{% url 'cart:home' %}">
             <span class="navbar-cart-count">
               {% with request.session.cart_items|default:0 as cart_items %}
                 {{ cart_items }}
@@ -53,7 +64,9 @@
           </a>
         </li>
       </ul>
+
+      <!-- Formulário de Pesquisa -->
       {% include 'search/snippets/search-form.html' %}
     </div>
-  </div><!--fim container-->
+  </div>
 </nav>

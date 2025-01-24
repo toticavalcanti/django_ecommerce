@@ -21,3 +21,13 @@ def add_class(field, css_class):
         return field.as_widget(attrs={"class": css_class})
     except AttributeError:
         return field
+
+@register.filter
+def startswith(value, prefix):
+    """
+    Verifica se o valor começa com o prefixo.
+    """
+    try:
+        return str(value).startswith(str(prefix))
+    except AttributeError:
+        return False
