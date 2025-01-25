@@ -1,5 +1,6 @@
 import os
 import environ
+from django.contrib.messages import constants as messages
 import logging
 
 logger = logging.getLogger(__name__)
@@ -62,7 +63,6 @@ MIDDLEWARE = [
 # Configurações de Mensagens
 MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.FallbackStorage'
 
-from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
     messages.DEBUG: 'debug',
     messages.INFO: 'info',
