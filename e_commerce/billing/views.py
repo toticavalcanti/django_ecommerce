@@ -65,21 +65,19 @@ def payment_method_view(request):
 def create_checkout_session(request):
     try:
         cart_id = request.session.get("cart_id")
-        print(f"Cart ID: {cart_id}")
-        
         cart_obj = Cart.objects.get(id=cart_id)
-        print(f"Cart Total: {cart_obj.total}")
+        order_obj = Order.objects.filter(cart=cart_obj).first()
+        total = cart_obj.total + order_obj.shipping_total
 
         intent = stripe.PaymentIntent.create(
-            amount=int(cart_obj.total * 100),
+            amount=int(total * 100),
             currency='brl',
-            payment_method_types=['card'],
+            automatic_payment_methods={'enabled': True},
         )
-        print(f"Payment Intent: {intent.id}")
-        
+
         return JsonResponse({
             'clientSecret': intent.client_secret
         })
     except Exception as e:
-        print(f"Error: {str(e)}")
+        print(f"Stripe Error: {str(e)}")
         return JsonResponse({'error': str(e)}, status=400)
