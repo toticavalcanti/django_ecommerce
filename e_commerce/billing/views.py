@@ -27,13 +27,6 @@ def payment_success_view(request):
 def payment_failed_view(request):
     return render(request, 'billing/payment-failed.html')
 
-from django.shortcuts import redirect, render
-from django.contrib import messages
-from carts.models import Cart
-from billing.models import BillingProfile
-from orders.models import Order
-from django.conf import settings
-
 def payment_method_view(request):
     try:
         cart_id = request.session.get("cart_id")
