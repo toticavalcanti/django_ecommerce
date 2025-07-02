@@ -1,4 +1,8 @@
-/* Estilos aplicados apenas ao formulário do Stripe */
+/* ============================================================================
+   STRIPE CUSTOM STYLES - SISTEMA COMPLETO DE PAGAMENTO E CARTÕES SALVOS
+   ============================================================================ */
+
+/* === FORMULÁRIO PRINCIPAL STRIPE === */
 #payment-form {
   width: 30vw;
   min-width: 500px;
@@ -7,10 +11,6 @@
     0px 2px 5px 0px rgba(50, 50, 93, 0.1), 0px 1px 1.5px 0px rgba(0, 0, 0, 0.07);
   border-radius: 7px;
   padding: 40px;
-}
-
-.hidden {
-  display: none;
 }
 
 #payment-form input {
@@ -24,42 +24,13 @@
   background: white;
 }
 
-.result-message {
-  line-height: 22px;
-  font-size: 16px;
-}
-
-.result-message a {
-  color: rgb(89, 111, 214);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.hidden {
-  display: none;
-}
-
-.card-img-wrapper {
-  height: 250px; /* Aumentando a altura do contêiner da imagem */
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.card-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; /* Garante que o conteúdo comece no topo */
-  min-height: 150px; /* Defina uma altura mínima para alinhar os textos */
-}
-
-.card-title {
-  margin-bottom: auto; /* Permite que o título tenha um pouco de espaço */
-}
-
-.card-text {
-  margin-top: auto; /* O texto começa após o título */
+#card-element {
+  border-radius: 4px 4px 0 0;
+  padding: 12px;
+  border: 1px solid rgba(50, 50, 93, 0.1);
+  height: 44px;
+  width: 100%;
+  background: white;
 }
 
 #card-error {
@@ -70,20 +41,11 @@
   margin-top: 12px;
 }
 
-#card-element {
-  border-radius: 4px 4px 0 0;
-  padding: 12px;
-  border: 1px solid rgba(50, 50, 93, 0.1);
-  height: 44px;
-  width: 100%;
-  background: white;
-}
-
 #payment-request-button {
   margin-bottom: 32px;
 }
 
-/* Buttons and links específicos do formulário Stripe */
+/* === BOTÕES STRIPE === */
 #payment-form button {
   background: #5469d4;
   color: #ffffff;
@@ -109,7 +71,23 @@
   cursor: default;
 }
 
-/* spinner/processing state, errors */
+/* === MENSAGENS E RESULTADOS === */
+.result-message {
+  line-height: 22px;
+  font-size: 16px;
+}
+
+.result-message a {
+  color: rgb(89, 111, 214);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.hidden {
+  display: none;
+}
+
+/* === SPINNER DE CARREGAMENTO === */
 .spinner,
 .spinner:before,
 .spinner:after {
@@ -162,9 +140,75 @@
   animation: loading 2s infinite ease;
 }
 
-@media (max-width: 576px) {
-  .btn {
-      font-size: 0.75rem; /* Reduz a fonte em telas pequenas */
+/* === CARTÕES DE PRODUTOS === */
+.card-img-wrapper {
+  height: 250px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 150px;
+}
+
+.card-title {
+  margin-bottom: auto;
+}
+
+.card-text {
+  margin-top: auto;
+}
+
+/* ============================================================================
+   ESTILOS PARA CARTÕES SALVOS
+   ============================================================================ */
+
+/* === CARTÕES SALVOS - ESTILO BASE === */
+.saved-card-item {
+  transition: all 0.3s ease;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.saved-card-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.saved-card-item.border-success {
+  background: linear-gradient(135deg, #f8fff9 0%, #e8f5e8 100%);
+}
+
+/* === ÍCONES DAS BANDEIRAS === */
+.fab.fa-cc-visa {
+  color: #1a1f71;
+}
+
+.fab.fa-cc-mastercard {
+  color: #eb001b;
+}
+
+.fab.fa-cc-amex {
+  color: #006fcf;
+}
+
+.fab.fa-cc-discover {
+  color: #ff6000;
+}
+
+/* === ANIMAÇÕES === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -173,7 +217,6 @@
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
   }
-
   100% {
     -webkit-transform: rotate(360deg);
     transform: rotate(360deg);
@@ -185,15 +228,37 @@
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
   }
-
   100% {
     -webkit-transform: rotate(360deg);
     transform: rotate(360deg);
   }
 }
 
-@media only screen and (max-width: 600px) {
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+/* === MOBILE FIRST === */
+@media (max-width: 576px) {
+  .btn {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 600px) {
   #payment-form {
     width: 80vw;
+  }
+}
+
+/* === TABLETS E MOBILE === */
+@media (max-width: 768px) {
+  .saved-card-item .col-md-6:last-child {
+    margin-top: 15px;
+  }
+  
+  .saved-card-item .btn {
+    width: 100%;
+    margin-bottom: 5px;
   }
 }

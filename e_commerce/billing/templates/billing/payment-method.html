@@ -1,114 +1,122 @@
-{% extends "base.html" %} {% load static %} {% block content %}
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <form id="payment-form" class="card shadow-sm">
-        <div class="card-body">
-          <h3 class="text-center mb-4">Pagamento</h3>
-          <div id="payment-element"></div>
-          <button id="submit" class="btn btn-primary w-100 mt-4">
-            <span id="button-text">Pagar R$ {{ order.total }}</span>
-          </button>
-          <div
-            id="payment-message"
-            class="alert alert-danger mt-3"
-            style="display: none"
-          ></div>
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class='col-10 col-md-6 mx-auto'>
+  <h1>{% if saved_cards %}Pagamento{% else %}Add Payment Method{% endif %}</h1>
+  <div id="stripe-key" data-publish-key="{{ publish_key }}" hidden></div>
+  
+  {% if saved_cards %}
+  <div class="mb-4">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Cartões Salvos</h5>
+      </div>
+      <div class="card-body">
+        {% for card in saved_cards %}
+        <div class="border rounded p-3 mb-3 {% if card.default %}border-success{% elif card.is_expired %}border-danger{% else %}border-secondary{% endif %}">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="d-flex align-items-center">
+                <div>
+                  <strong>{{ card.get_display_name }}</strong>
+                  <br>
+                  <small class="text-muted">
+                    Expira em {{ card.exp_month|stringformat:"02d" }}/{{ card.exp_year }}
+                    {% if card.default %}
+                      <span class="badge badge-success ml-2">Padrão</span>
+                    {% endif %}
+                    {% if card.is_expired %}
+                      <span class="badge badge-danger ml-2">Expirado</span>
+                    {% endif %}
+                  </small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 text-right">
+              {% if not card.is_expired %}
+                <button 
+                  type="button"
+                  class="btn btn-primary btn-sm mb-2 use-card-btn"
+                  data-card-id="{{ card.stripe_card_id }}"
+                  data-card-name="{{ card.get_display_name }}"
+                >
+                  <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                  <span class="btn-text">Usar este Cartão</span>
+                </button>
+              {% endif %}
+              
+              {% if not card.default and not card.is_expired %}
+                <form method="POST" action="{% url 'set-default-card' card.id %}" class="d-inline set-default-form">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-outline-secondary btn-sm mb-2">
+                    <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                    <span class="btn-text">Definir como Padrão</span>
+                  </button>
+                </form>
+              {% endif %}
+              
+              <form method="POST" action="{% url 'delete-card' card.id %}" class="d-inline delete-card-form">
+                {% csrf_token %}
+                <button 
+                  type="submit" 
+                  class="btn btn-outline-danger btn-sm mb-2"
+                  data-card-name="{{ card.get_display_name }}"
+                >
+                  <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                  <span class="btn-text">Remover</span>
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0">
+        {% if saved_cards %}Adicionar Novo Cartão{% else %}Informações de Pagamento{% endif %}
+      </h5>
+    </div>
+    <div class="card-body">
+      <form id="payment-form" method="POST">
+        {% csrf_token %}
+        <div id="payment-element" class='form-control mb-3'>
+            <!-- Stripe Elements will be inserted here -->
+        </div>
+        
+        {% if billing_profile %}
+        <div class="form-check mb-3">
+          <input 
+            type="checkbox" 
+            class="form-check-input"
+            id="save-card"
+            checked
+          >
+          <label class="form-check-label" for="save-card">
+            Salvar este cartão para compras futuras
+          </label>
+        </div>
+        {% endif %}
+        
+        <button class='btn btn-primary my-3' id="submit">
+          <div class="spinner hidden" id="spinner"></div>
+          <span id="button-text" data-original-text="Pagar R$ {{ order.total }}">Pagar R$ {{ order.total }}</span>
+        </button>
+        
+        <div id="payment-message" class="hidden alert"></div>
+        <div id="next-url" data-url="/"></div>
       </form>
     </div>
   </div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <script src="https://js.stripe.com/v3/"></script>
-<script>
-  const stripe = Stripe("{{ publish_key }}");
-  let elements;
-
-  initialize();
-  checkStatus();
-
-  document
-    .querySelector("#payment-form")
-    .addEventListener("submit", handleSubmit);
-
-  async function initialize() {
-    const response = await fetch("/billing/create-checkout-session", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": "{{ csrf_token }}",
-      },
-    });
-    const { clientSecret } = await response.json();
-
-    elements = stripe.elements({ clientSecret });
-    const paymentElement = elements.create("payment");
-    paymentElement.mount("#payment-element");
-  }
-
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setLoading(true);
-
-    const { error } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: window.location.origin + "/billing/payment-success/",
-      },
-    });
-
-    if (error.type === "card_error" || error.type === "validation_error") {
-      showMessage(error.message);
-    } else {
-      showMessage("Ocorreu um erro inesperado.");
-    }
-
-    setLoading(false);
-  }
-
-  async function checkStatus() {
-    const clientSecret = new URLSearchParams(window.location.search).get(
-      "payment_intent_client_secret"
-    );
-
-    if (!clientSecret) {
-      return;
-    }
-
-    const { paymentIntent } = await stripe.retrievePaymentIntent(clientSecret);
-
-    switch (paymentIntent.status) {
-      case "succeeded":
-        showMessage("Pagamento realizado com sucesso!");
-        break;
-      case "processing":
-        showMessage("Seu pagamento está sendo processado.");
-        break;
-      case "requires_payment_method":
-        showMessage("Seu pagamento não foi bem sucedido, tente novamente.");
-        break;
-      default:
-        showMessage("Algo deu errado.");
-        break;
-    }
-  }
-
-  function showMessage(messageText) {
-    const messageContainer = document.querySelector("#payment-message");
-    messageContainer.textContent = messageText;
-    messageContainer.style.display = "block";
-  }
-
-  function setLoading(isLoading) {
-    if (isLoading) {
-      document.querySelector("#submit").disabled = true;
-      document.querySelector("#button-text").textContent = "Processando...";
-    } else {
-      document.querySelector("#submit").disabled = false;
-      document.querySelector("#button-text").textContent =
-        "Pagar R$ {{ order.total }}";
-    }
-  }
-</script>
+<script src="{% static 'js/payment-method.js' %}"></script>
 {% endblock %}
