@@ -32,7 +32,7 @@
       <div class="card shadow-sm">
         <div class="card-body">
           <h2 class="text-center mb-4 text-primary">Login</h2>
-          <form method="POST" action="{% url 'accounts:login' %}">
+          <form method="POST" action="{% url 'login' %}">
             {% csrf_token %}
             <div class="form-group mb-3">
               <label for="id_email" class="form-label fw-bold">Email</label>

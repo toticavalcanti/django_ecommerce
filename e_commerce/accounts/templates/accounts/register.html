@@ -33,7 +33,7 @@
         <div class="card shadow-sm">
           <div class="card-body">
             <h2 class="text-center mb-4 text-primary">Registrar</h2>
-            <form method="POST" action="{% url 'accounts:register' %}">
+            <form method="POST" action="{% url 'register' %}">
               {% csrf_token %}
               <div class="form-group mb-3">
                 <label for="{{ form.email.id_for_label }}" class="form-label fw-bold">Email</label>

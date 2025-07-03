@@ -70,6 +70,6 @@ $(document).ready(function(){
       body: JSON.stringify(data)
     });
   }
-  const url = window.location.pathname;
-  sendData(url)
+  // const url = window.location.pathname;
+  // sendData(url)
 });
