@@ -11,6 +11,7 @@ from accounts.views import LoginView, RegisterView, LogoutView, guest_register_v
 from addresses.views import checkout_address_create_view, checkout_address_reuse_view
 from billing.views import (
     create_payment_intent, 
+    create_checkout_session,  # ← ADICIONADO!
     payment_method_view, 
     payment_success_view, 
     payment_failed_view, 
@@ -54,6 +55,7 @@ urlpatterns = [
     path('billing/payment-success/', payment_success_view, name='payment-success'),
     path('billing/payment-failed/', payment_failed_view, name='payment-failed'),
     path('billing/create-payment-intent/', create_payment_intent, name='create-payment-intent'),
+    path('billing/create-checkout-session/', create_checkout_session, name='create-checkout-session'),
     path('billing/save-payment-method/', save_payment_method, name='save-payment-method'),
     path('billing/set-default-card/<int:card_id>/', set_default_card, name='set-default-card'),
     path('billing/delete-card/<int:card_id>/', delete_card, name='delete-card'),

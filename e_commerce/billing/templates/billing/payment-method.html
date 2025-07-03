@@ -1,3 +1,5 @@
+<!-- PATH: e_commerce/billing/templates/billing/payment-method.html -->
+
 {% extends "base.html" %}
 {% load static %}
 
@@ -83,25 +85,35 @@
       </h5>
     </div>
     <div class="card-body">
+      
+      <!-- CHECKBOX MOVIDO PARA CIMA - FORA DA INTERFERÊNCIA DO STRIPE -->
+      {% if billing_profile %}
+      <div class="alert alert-info mb-3">
+        <div class="form-check">
+          <input 
+            type="checkbox" 
+            class="form-check-input"
+            id="save-card-checkbox"
+            checked
+            style="width: 20px; height: 20px; cursor: pointer;"
+          >
+          <label 
+            class="form-check-label ms-2" 
+            for="save-card-checkbox"
+            style="cursor: pointer; font-weight: bold;"
+          >
+            Salvar este cartão para compras futuras
+          </label>
+        </div>
+        <small class="text-muted">Você poderá usar este cartão em futuras compras sem precisar digitá-lo novamente.</small>
+      </div>
+      {% endif %}
+
       <form id="payment-form" method="POST">
         {% csrf_token %}
         <div id="payment-element" class='form-control mb-3'>
             <!-- Stripe Elements will be inserted here -->
         </div>
-        
-        {% if billing_profile %}
-        <div class="form-check mb-3">
-          <input 
-            type="checkbox" 
-            class="form-check-input"
-            id="save-card"
-            checked
-          >
-          <label class="form-check-label" for="save-card">
-            Salvar este cartão para compras futuras
-          </label>
-        </div>
-        {% endif %}
         
         <button class='btn btn-primary my-3' id="submit">
           <div class="spinner hidden" id="spinner"></div>
@@ -114,6 +126,45 @@
     </div>
   </div>
 </div>
+
+<!-- SCRIPT PARA GARANTIR QUE O CHECKBOX FUNCIONE -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('=== INICIALIZANDO CHECKBOX INDEPENDENTE ===');
+    
+    const checkbox = document.getElementById('save-card-checkbox');
+    
+    if (checkbox) {
+        // Garantir que está marcado
+        checkbox.checked = true;
+        
+        // Event listener para clicks
+        checkbox.addEventListener('click', function() {
+            console.log('✅ Checkbox clicado:', this.checked);
+        });
+        
+        checkbox.addEventListener('change', function() {
+            console.log('✅ Checkbox mudou para:', this.checked);
+        });
+        
+        // Event listener no label
+        const label = document.querySelector('label[for="save-card-checkbox"]');
+        if (label) {
+            label.addEventListener('click', function() {
+                console.log('✅ Label clicado');
+            });
+        }
+        
+        console.log('✅ Checkbox independente funcionando!');
+    }
+});
+
+// Função para verificar se deve salvar o cartão (usada pelo payment-method.js)
+window.shouldSaveCard = function() {
+    const checkbox = document.getElementById('save-card-checkbox');
+    return checkbox ? checkbox.checked : false;
+};
+</script>
 {% endblock %}
 
 {% block extra_js %}
